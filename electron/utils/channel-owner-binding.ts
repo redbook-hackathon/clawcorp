@@ -131,3 +131,16 @@ export async function clearAllChannelOwnerBindingsForChannel(channelType: string
     await writeOpenClawConfig(config);
   });
 }
+
+export async function clearChannelOwnerBindingsForTeam(teamId: string): Promise<void> {
+  const targetTeamId = normalizeOptional(teamId);
+  if (!targetTeamId) return;
+
+  await withConfigLock(async () => {
+    const config = await readOpenClawConfig() as ConfigDocument;
+    const current = readBindingsFromConfig(config);
+    const next = current.filter((entry) => entry.teamId !== targetTeamId);
+    writeBindingsToConfig(config, next);
+    await writeOpenClawConfig(config);
+  });
+}

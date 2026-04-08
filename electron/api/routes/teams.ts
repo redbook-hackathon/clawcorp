@@ -7,6 +7,7 @@ import {
   updateTeam,
   deleteTeam,
 } from '../../utils/team-config';
+import { clearChannelOwnerBindingsForTeam } from '../../utils/channel-owner-binding';
 import type { CreateTeamRequest, UpdateTeamRequest } from '../../src/types/team';
 import { logger } from '../../utils/logger';
 
@@ -23,7 +24,7 @@ export async function handleTeamRoutes(
   req: IncomingMessage,
   res: ServerResponse,
   url: URL,
-  ctx: HostApiContext,
+  _ctx: HostApiContext,
 ): Promise<boolean> {
   // GET /api/teams - List all teams
   if (url.pathname === '/api/teams' && req.method === 'GET') {
@@ -53,7 +54,7 @@ export async function handleTeamRoutes(
         return true;
       }
 
-      const newTeam = await createTeam(body);
+      await createTeam(body);
 
       // Return all teams after creation (following agents.ts pattern)
       const teams = await listTeamsSnapshot();
@@ -106,6 +107,7 @@ export async function handleTeamRoutes(
       }
 
       await deleteTeam(teamId);
+      await clearChannelOwnerBindingsForTeam(teamId);
 
       // Return all teams after deletion (following agents.ts pattern)
       const teams = await listTeamsSnapshot();

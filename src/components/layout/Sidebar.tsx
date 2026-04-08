@@ -5,6 +5,7 @@ import {
   ChevronRight,
   LayoutDashboard,
   MessageSquare,
+  Network,
   PanelLeft,
   PanelLeftClose,
   Pin,
@@ -12,6 +13,7 @@ import {
   Radio,
   Search,
   Settings as SettingsIcon,
+  Store,
   Trash2,
   Users,
 } from 'lucide-react';
@@ -29,6 +31,7 @@ import { useGatewayStore } from '@/stores/gateway';
 import { useSettingsStore } from '@/stores/settings';
 import { useRightPanelStore } from '@/stores/rightPanelStore';
 import { CHANNEL_ICONS, type Channel } from '@/types/channel';
+import { ChannelIcon } from '@/components/channels/ChannelIcon';
 
 const CHAT_REQUEST_FILE_UPLOAD_EVENT = 'chat:request-file-upload';
 const CHAT_UPLOAD_PENDING_KEY = 'clawcorp:pending-upload';
@@ -36,6 +39,7 @@ const NICKNAME_STORAGE_KEY = 'clawcorp-user-nickname';
 const LEGACY_NICKNAME_STORAGE_KEY = 'clawx-user-nickname';
 const AVATAR_STORAGE_KEY = 'clawcorp-user-avatar';
 const LEGACY_AVATAR_STORAGE_KEY = 'clawx-user-avatar';
+const HIDE_SIDEBAR_CHANNELS = true;
 
 type NavItemConfig = {
   label: string;
@@ -75,17 +79,17 @@ function SectionHeader({
       aria-label={label}
       onClick={onToggle}
       className={cn(
-        'flex h-11 w-full items-center gap-3 rounded-xl px-3 text-sm font-medium transition-colors hover:bg-[#e5e5ea]',
+        'flex h-12 w-full items-center gap-4 rounded-2xl px-4 text-sm font-bold transition-all duration-300 text-gray-400 hover:bg-white hover:text-[#1A1C1E]',
         collapsed && 'justify-center px-2',
       )}
     >
-      <Icon className="h-4 w-4 shrink-0" />
+      <Icon className="h-5 w-5 shrink-0" />
       {!collapsed ? (
         <>
           <span className="flex-1 truncate text-left">{label}</span>
           <ChevronRight
             className={cn(
-              'h-4 w-4 shrink-0 text-[#8e8e93] transition-transform',
+              'h-4 w-4 shrink-0 text-gray-300 transition-transform',
               open && 'rotate-90',
             )}
           />
@@ -116,9 +120,9 @@ function SessionSectionHeader({
         type="button"
         aria-label={label}
         onClick={onToggle}
-        className="flex h-11 w-full items-center justify-center rounded-xl px-2 text-sm font-medium transition-colors hover:bg-[#e5e5ea]"
+        className="flex h-12 w-full items-center justify-center rounded-2xl px-2 text-sm font-bold transition-all duration-300 text-gray-400 hover:bg-white hover:text-[#1A1C1E]"
       >
-        <MessageSquare className="h-4 w-4 shrink-0" />
+        <MessageSquare className="h-5 w-5 shrink-0" />
       </button>
     );
   }
@@ -129,15 +133,15 @@ function SessionSectionHeader({
         type="button"
         aria-label={label}
         onClick={onToggle}
-        className="flex h-11 min-w-0 flex-1 items-center gap-3 rounded-xl px-3 text-sm font-medium transition-colors hover:bg-[#e5e5ea] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0a84ff]/40"
+        className="flex h-12 min-w-0 flex-1 items-center gap-4 rounded-2xl px-4 text-sm font-bold transition-all duration-300 text-gray-400 hover:bg-white hover:text-[#1A1C1E] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FFD233]/40"
       >
-        <MessageSquare className="h-4 w-4 shrink-0" />
+        <MessageSquare className="h-5 w-5 shrink-0" />
         <span className="truncate text-left">{label}</span>
         <ChevronRight
           data-testid="sessions-section-chevron"
           aria-hidden="true"
           className={cn(
-            'h-4 w-4 shrink-0 text-[#8e8e93] transition-all opacity-0 group-hover/sessions-header:opacity-100 group-focus-within/sessions-header:opacity-100',
+            'h-4 w-4 shrink-0 text-gray-300 transition-all opacity-0 group-hover/sessions-header:opacity-100 group-focus-within/sessions-header:opacity-100',
             open && 'rotate-90',
           )}
         />
@@ -148,7 +152,7 @@ function SessionSectionHeader({
         aria-label={newSessionLabel}
         title={newSessionLabel}
         onClick={onNewSession}
-        className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-[#3c3c43] transition-colors hover:bg-[#e5e5ea] hover:text-[#000000] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0a84ff]/40"
+        className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white/50 text-gray-400 shadow-sm transition-all hover:bg-white hover:text-[#1A1C1E] hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FFD233]/40"
       >
         <Plus className="h-4 w-4" />
       </button>
@@ -175,14 +179,14 @@ function NavItem({
       aria-label={item.label}
       onClick={onClick}
       className={cn(
-        'flex h-11 w-full items-center gap-3 rounded-xl px-3 text-sm font-medium transition-colors',
+        'flex h-14 w-full items-center gap-4 rounded-2xl px-4 text-sm font-bold transition-all duration-300',
         active
-          ? 'bg-white text-[#000000] shadow-[0_1px_2px_rgba(0,0,0,0.04),0_0_0_0.5px_rgba(0,0,0,0.04)]'
-          : 'text-[#000000] hover:bg-[#e5e5ea]',
+          ? 'bg-[#FFD233] text-[#1A1C1E] shadow-md'
+          : 'text-gray-400 hover:bg-white hover:text-[#1A1C1E]',
         collapsed && 'justify-center px-2',
       )}
     >
-      <Icon className="h-4 w-4 shrink-0" strokeWidth={1.5} />
+      <Icon className="h-[22px] w-[22px] shrink-0" strokeWidth={1.5} />
       {!collapsed ? <span className="truncate">{item.label}</span> : null}
     </button>
   );
@@ -283,19 +287,29 @@ export function Sidebar() {
 
   const navItems: NavItemConfig[] = [
     {
+      label: tSidebar('marketplace', 'Marketplace'),
+      path: '/marketplace',
+      icon: Store,
+    },
+    {
+      label: tSidebar('humanAssets', 'Human Assets'),
+      path: '/team-overview',
+      icon: Users,
+    },
+    // {
+    //   label: tSidebar('employeeSquare', 'Employee square'),
+    //   path: '/agents',
+    //   icon: Bot,
+    // },
+    {
       label: tSidebar('taskBoard', 'Task board'),
       path: '/kanban',
       icon: LayoutDashboard,
     },
     {
-      label: tSidebar('teamOverview', 'Team overview'),
-      path: '/team-overview',
-      icon: Users,
-    },
-    {
-      label: tSidebar('employeeSquare', 'Employee square'),
-      path: '/agents',
-      icon: Bot,
+      label: tSidebar('gateway', '生态网关'),
+      path: '/gateway',
+      icon: Network,
     },
   ];
 
@@ -367,15 +381,15 @@ export function Sidebar() {
   return (
     <aside
       className={cn(
-        'flex shrink-0 flex-col border-r border-black/[0.06] bg-[#f2f2f7] transition-all duration-300 dark:border-white/10 dark:bg-background',
-        sidebarCollapsed ? 'w-16 px-2 py-2' : 'w-[260px] px-2 py-2',
+        'flex shrink-0 flex-col bg-[#F2F0E9] transition-all duration-300 dark:bg-background',
+        sidebarCollapsed ? 'w-16 px-2 py-4' : 'w-[260px] px-3 py-4',
       )}
     >
       <div className={cn('flex items-center gap-2', sidebarCollapsed ? 'justify-center' : 'justify-between')}>
         <button
           type="button"
           aria-label={tSidebar('toggleSidebar', 'Toggle sidebar')}
-          className="flex h-9 w-9 items-center justify-center rounded-lg text-[#3c3c43] transition-colors hover:bg-[#e5e5ea] hover:text-[#000000]"
+          className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/50 text-gray-400 shadow-sm transition-all hover:bg-white hover:text-[#1A1C1E] hover:shadow-md"
           onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
         >
           {sidebarCollapsed ? (
@@ -388,7 +402,7 @@ export function Sidebar() {
           <button
             type="button"
             aria-label={tSidebar('searchSessions', 'Search sessions')}
-            className="flex h-9 w-9 items-center justify-center rounded-lg text-[#000000] transition-colors hover:bg-[#e5e5ea]"
+            className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/50 text-gray-400 shadow-sm transition-all hover:bg-white hover:text-[#1A1C1E] hover:shadow-md"
             onClick={() => setSessionSearchOpen(true)}
           >
             <Search className="h-5 w-5" />
@@ -396,7 +410,10 @@ export function Sidebar() {
         )}
       </div>
 
-      <div className="mt-4 space-y-2">
+      <div className={cn(
+        'mt-4 space-y-1 rounded-[32px] border border-white/40 bg-white/50 p-3 shadow-sm backdrop-blur-md',
+        sidebarCollapsed && 'rounded-2xl p-2',
+      )}>
         {navItems.map((item) => (
           <NavItem
             key={item.path}
@@ -408,8 +425,8 @@ export function Sidebar() {
         ))}
       </div>
 
-      <div className="mt-4 flex min-h-0 flex-1 flex-col overflow-y-auto">
-        <div className="space-y-2">
+      <div className="mt-4 flex min-h-0 flex-1 flex-col overflow-y-auto custom-scrollbar">
+        <div className={cn('space-y-1', HIDE_SIDEBAR_CHANNELS && 'hidden')}>
           <SectionHeader
             icon={Radio}
             label={tSidebar('channels', 'Channels')}
@@ -429,7 +446,7 @@ export function Sidebar() {
                 if (sortedBots.length === 0) {
                   return (
                     <>
-                      <p className="px-3 py-2 text-[13px] text-muted-foreground">
+                      <p className="px-4 py-2 text-[13px] text-gray-400">
                         {tSidebar('noChannels', 'No channels configured')}
                       </p>
                       <button
@@ -438,7 +455,7 @@ export function Sidebar() {
                           setPendingAddChannel(true);
                           navigate('/channels');
                         }}
-                        className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-[13px] text-[#8e8e93] transition-colors hover:bg-[#e5e5ea] hover:text-[#3c3c43]"
+                        className="flex w-full items-center gap-2 rounded-2xl px-4 py-2.5 text-[13px] font-bold text-gray-400 transition-all hover:bg-white hover:text-[#1A1C1E]"
                       >
                         <Plus className="h-3.5 w-3.5" />
                         <span>添加渠道</span>
@@ -451,7 +468,6 @@ export function Sidebar() {
                   <>
                     {sortedBots.map((bot) => {
                       const isActive = bot.id === activeChannelId;
-                      const icon = CHANNEL_ICONS[bot.type] ?? '🔌';
                       const statusDotColor =
                         bot.status === 'connected'
                           ? 'bg-[#10b981]'
@@ -460,15 +476,18 @@ export function Sidebar() {
                             : bot.status === 'error'
                               ? 'bg-[#ef4444]'
                               : 'bg-[#94a3b8]';
+                      const boundAgent = bot.boundAgentId
+                        ? agents.find((a) => a.id === bot.boundAgentId)
+                        : null;
 
                       return (
                         <div
                           key={bot.id}
                           className={cn(
-                            'flex items-center gap-2 rounded-lg px-3 py-2 text-[14px] transition-colors',
+                            'flex items-center gap-2 rounded-2xl px-4 py-2.5 text-[14px] transition-all duration-300',
                             isActive
-                              ? 'bg-[#EEF2FF] text-[#6366f1] font-medium'
-                              : 'text-[#000000] hover:bg-[#e5e5ea]',
+                              ? 'bg-[#FFD233]/20 text-[#1A1C1E] font-bold'
+                              : 'text-gray-400 hover:bg-white hover:text-[#1A1C1E]',
                           )}
                         >
                           <button
@@ -479,8 +498,13 @@ export function Sidebar() {
                             }}
                             className="flex min-w-0 flex-1 items-center gap-2"
                           >
-                            <span className="shrink-0 text-[14px]">{icon}</span>
+                            <ChannelIcon type={bot.type} size={16} />
                             <span className="truncate text-[13px]">{bot.name}</span>
+                            {boundAgent && (
+                              <span className="shrink-0 truncate text-[10px] font-medium text-indigo-500 bg-indigo-50 px-1.5 py-0.5 rounded-full max-w-[60px]">
+                                {boundAgent.name}
+                              </span>
+                            )}
                             <span className={cn('h-1.5 w-1.5 shrink-0 rounded-full', statusDotColor)} />
                           </button>
                           <button
@@ -490,7 +514,7 @@ export function Sidebar() {
                               setPendingBotSettings(bot.id);
                               navigate('/channels');
                             }}
-                            className="shrink-0 text-[12px] text-[#8e8e93] hover:text-[#3c3c43]"
+                            className="shrink-0 text-[12px] text-gray-300 hover:text-[#1A1C1E]"
                             aria-label="设置"
                           >
                             ⚙
@@ -504,7 +528,7 @@ export function Sidebar() {
                         setPendingAddChannel(true);
                         navigate('/channels');
                       }}
-                      className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-[13px] text-[#8e8e93] transition-colors hover:bg-[#e5e5ea] hover:text-[#3c3c43]"
+                      className="flex w-full items-center gap-2 rounded-2xl px-4 py-2.5 text-[13px] font-bold text-gray-400 transition-all hover:bg-white hover:text-[#1A1C1E]"
                     >
                       <Plus className="h-3.5 w-3.5" />
                       <span>添加渠道</span>
@@ -516,7 +540,7 @@ export function Sidebar() {
           ) : null}
         </div>
 
-        <div className="mt-4 space-y-2">
+        <div className="mt-4 space-y-1">
           <SessionSectionHeader
             label={tSidebar('sessions', 'Sessions')}
             open={sessionsOpen}
@@ -530,11 +554,15 @@ export function Sidebar() {
               {sortedSessions.length > 0 ? (
                 <div className="space-y-2">
                   {sortedSessions.map((session) => {
+                    const sessionAgent = agents.find(
+                      (a) => a.id === (session.targetAgentId ?? session.agentId),
+                    );
                     const label =
                       prefixChannelSessionLabel(
                         session.key,
                         sessionLabels[session.key] ??
                         session.label ??
+                        sessionAgent?.name ??
                         session.displayName ??
                         session.key,
                       );
@@ -550,6 +578,7 @@ export function Sidebar() {
                         isPinned={isPinned}
                         isActive={isActive}
                         messagePreview={messagePreview}
+                        agentAvatar={agents.find((a) => a.id === (session.targetAgentId ?? session.agentId))?.avatar}
                         onClick={() => {
                           switchSession(session.key);
                           navigate('/');
@@ -561,7 +590,7 @@ export function Sidebar() {
                   })}
                 </div>
               ) : (
-                <p className="px-3 py-2 text-sm text-muted-foreground">
+                <p className="px-4 py-2 text-sm text-gray-400">
                   {tSidebar('noSessions', 'No sessions')}
                 </p>
               )}
@@ -570,28 +599,28 @@ export function Sidebar() {
         </div>
       </div>
 
-      <div className="mt-auto border-t border-[#c6c6c8] dark:border-white/10">
+      <div className="mt-auto pt-3">
         {/* User Info Section */}
-        <div className="flex h-[52px] shrink-0 items-center gap-[10px] px-4 transition-colors hover:bg-[#e5e5ea] dark:hover:bg-white/[0.04]">
+        <div className="flex h-[56px] shrink-0 items-center gap-3 rounded-2xl px-4 transition-all hover:bg-white/50">
           {!sidebarCollapsed && (
             <>
               <button
                 type="button"
                 aria-label={tSidebar('selectAvatar', 'Select avatar')}
                 onClick={() => setAvatarPopupOpen(true)}
-                className="h-7 w-7 shrink-0 rounded-full bg-[#d9d9d9] flex items-center justify-center text-[18px] transition-colors hover:ring-2 hover:ring-clawcorp-ac/40"
+                className="h-10 w-10 shrink-0 rounded-xl bg-white/50 flex items-center justify-center text-[20px] shadow-sm transition-all hover:scale-110 hover:shadow-md"
               >
                 {selectedAvatar}
               </button>
-              <span className="flex-1 truncate text-[13px] font-medium">{nickname}</span>
+              <span className="flex-1 truncate text-[13px] font-bold text-[#1A1C1E]">{nickname}</span>
               <button
                 type="button"
                 aria-label={tSidebar('settingsAria', 'Settings')}
-                className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-[16px] transition-colors hover:bg-[#e5e5ea]"
+                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white/50 text-gray-400 shadow-sm transition-all hover:bg-white hover:text-[#1A1C1E] hover:shadow-md"
                 onClick={() => navigate('/settings')}
                 title={tSidebar('settings', 'Settings')}
               >
-                <SettingsIcon className="h-4 w-4" />
+                <SettingsIcon className="h-5 w-5" />
               </button>
             </>
           )}
@@ -667,64 +696,64 @@ function AvatarPopup({
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-start" onClick={onClose}>
       <div
-        className="absolute bottom-[60px] left-2 w-[260px] overflow-hidden rounded-[18px] bg-white shadow-[0_8px_40px_rgba(0,0,0,0.18)] ring-1 ring-black/[0.06]"
+        className="absolute bottom-[68px] left-3 w-[260px] overflow-hidden rounded-[24px] bg-white shadow-[0_20px_50px_rgba(0,0,0,0.12)] border border-white/40"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-black/[0.06] px-4 py-3">
-          <span className="text-[14px] font-semibold text-[#000000]">{tSidebar('profile')}</span>
+        <div className="flex items-center justify-between border-b border-gray-100 px-5 py-4">
+          <span className="text-[14px] font-bold text-[#1A1C1E]">{tSidebar('profile')}</span>
           <button
             type="button"
             onClick={onClose}
-            className="flex h-6 w-6 items-center justify-center rounded-full bg-[#f2f2f7] text-[12px] text-[#3c3c43] hover:bg-[#e5e5ea]"
+            className="flex h-7 w-7 items-center justify-center rounded-full bg-[#F2F0E9] text-[12px] text-gray-400 hover:bg-gray-200 hover:text-[#1A1C1E]"
           >
             ✕
           </button>
         </div>
 
         {/* Current avatar preview */}
-        <div className="flex flex-col items-center py-4">
-          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-[#f2f2f7] text-[32px]">
+        <div className="flex flex-col items-center py-5">
+          <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-[#F2F0E9] text-[36px] shadow-sm">
             {selectedAvatar}
           </div>
-          <span className="mt-2 text-[13px] font-medium text-[#000000]">{draft || nickname}</span>
+          <span className="mt-2 text-[14px] font-bold text-[#1A1C1E]">{draft || nickname}</span>
         </div>
 
         {/* Avatar grid */}
-        <div className="grid grid-cols-3 gap-2 px-4 pb-3">
+        <div className="grid grid-cols-3 gap-2 px-5 pb-3">
           {AVATAR_OPTIONS.map((opt) => (
             <button
               key={opt.emoji}
               type="button"
               onClick={() => setSelectedAvatar(opt.emoji)}
               className={cn(
-                'flex flex-col items-center gap-1 rounded-xl py-2 text-[22px] transition-colors',
+                'flex flex-col items-center gap-1 rounded-2xl py-2.5 text-[24px] transition-all',
                 selectedAvatar === opt.emoji
-                  ? 'bg-clawcorp-ac/10 ring-1 ring-clawcorp-ac/40'
-                  : 'hover:bg-[#f2f2f7]',
+                  ? 'bg-[#FFD233]/20 ring-2 ring-[#FFD233]/40 shadow-sm'
+                  : 'hover:bg-[#F2F0E9]',
               )}
             >
               {opt.emoji}
-              <span className="text-[10px] text-[#8e8e93]">{tSidebar(opt.label)}</span>
+              <span className="text-[10px] font-bold text-gray-400">{tSidebar(opt.label)}</span>
             </button>
           ))}
         </div>
 
         {/* Nickname input */}
-        <div className="border-t border-black/[0.06] px-4 py-3">
-          <label className="mb-1.5 block text-[11px] font-semibold uppercase tracking-[0.5px] text-[#8e8e93]">
+        <div className="border-t border-gray-100 px-5 py-4">
+          <label className="mb-2 block text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400">
             {tSidebar('nickname')}
           </label>
           <input
             value={draft}
             onChange={(e) => setDraft(e.target.value)}
             placeholder={tSidebar('nicknamePlaceholder')}
-            className="w-full rounded-lg border border-black/10 bg-[#f2f2f7] px-3 py-2 text-[13px] text-[#000000] outline-none focus:border-clawcorp-ac focus:bg-white"
+            className="w-full rounded-2xl border border-gray-100 bg-[#F2F0E9]/50 px-4 py-2.5 text-[13px] font-bold text-[#1A1C1E] outline-none focus:border-[#FFD233] focus:ring-2 focus:ring-[#FFD233]/20 focus:bg-white"
           />
         </div>
 
         {/* Save button */}
-        <div className="px-4 pb-4">
+        <div className="px-5 pb-5">
           <button
             type="button"
             onClick={() => {
@@ -732,7 +761,7 @@ function AvatarPopup({
               onAvatarChange(selectedAvatar);
               onClose();
             }}
-            className="w-full rounded-full bg-clawcorp-ac py-2 text-[13px] font-semibold text-white hover:bg-[#0062cc]"
+            className="w-full rounded-full bg-[#1A1C1E] py-3 text-[13px] font-bold text-white shadow-xl transition-all hover:scale-[1.02] hover:bg-[#FF6B4A]"
           >
             {t('common:actions.save')}
           </button>

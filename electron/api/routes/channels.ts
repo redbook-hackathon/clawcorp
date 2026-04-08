@@ -39,6 +39,12 @@ import { OPENCLAW_WECHAT_CHANNEL_TYPE, toOpenClawChannelType, toUiChannelType } 
 import { proxyAwareFetch } from '../../utils/proxy-fetch';
 import { sendFeishuViaPreferredPath } from '../../utils/feishu-send-path';
 import {
+  clearAllChannelOwnerBindingsForChannel,
+  clearChannelOwnerBinding,
+  listChannelOwnerBindings,
+  upsertChannelOwnerBinding,
+} from '../../utils/channel-owner-binding';
+import {
   listDiscordDirectoryGroupsFromConfig,
   listDiscordDirectoryPeersFromConfig,
   normalizeDiscordMessagingTarget,
@@ -372,6 +378,8 @@ type ChannelAccountView = {
   status: NormalizedChannelStatus;
   isDefault: boolean;
   agentId?: string;
+  teamId?: string;
+  responsiblePerson?: string;
 };
 
 type ChannelAccountsView = {
@@ -1506,10 +1514,11 @@ async function listNormalizedCapabilities(ctx: HostApiContext): Promise<Normaliz
 }
 
 async function buildChannelAccountsView(ctx: HostApiContext): Promise<ChannelAccountsView[]> {
-  const [configuredChannelTypes, configuredAccounts, agentsSnapshot] = await Promise.all([
+  const [configuredChannelTypes, configuredAccounts, agentsSnapshot, ownerBindings] = await Promise.all([
     listConfiguredChannels(),
     listConfiguredChannelAccounts(),
     listAgentsSnapshot(),
+    listChannelOwnerBindings(),
   ]);
 
   let statusSnapshot: ChannelsStatusSnapshot | null = null;
@@ -1524,6 +1533,10 @@ async function buildChannelAccountsView(ctx: HostApiContext): Promise<ChannelAcc
     ...Object.keys(configuredAccounts),
     ...Object.keys(statusSnapshot?.channelAccounts || {}),
   ]);
+
+  const ownerBindingByKey = new Map(
+    ownerBindings.map((entry) => [`${entry.channelType}:${entry.accountId}`, entry] as const),
+  );
 
   const channels: ChannelAccountsView[] = [];
   for (const rawChannelType of rawChannelTypes) {
@@ -1552,6 +1565,8 @@ async function buildChannelAccountsView(ctx: HostApiContext): Promise<ChannelAcc
 
     const accounts: ChannelAccountView[] = accountIds.map((accountId) => {
       const runtime = runtimeAccounts.find((account) => account.accountId === accountId);
+      const ownerBinding = ownerBindingByKey.get(`${rawChannelType}:${accountId}`);
+      const agentId = ownerBinding?.agentId || agentsSnapshot.channelOwners?.[`${rawChannelType}:${accountId}`];
       return {
         accountId,
         name: runtime?.name || accountId,
@@ -1562,9 +1577,9 @@ async function buildChannelAccountsView(ctx: HostApiContext): Promise<ChannelAcc
         ...(typeof runtime?.lastError === 'string' ? { lastError: runtime.lastError } : {}),
         status: resolveNormalizedStatus(summary, runtime),
         isDefault: accountId === defaultAccountId,
-        ...(agentsSnapshot.channelOwners?.[`${rawChannelType}:${accountId}`]
-          ? { agentId: agentsSnapshot.channelOwners[`${rawChannelType}:${accountId}`] }
-          : {}),
+        ...(agentId ? { agentId } : {}),
+        ...(ownerBinding?.teamId ? { teamId: ownerBinding.teamId } : {}),
+        ...(ownerBinding?.responsiblePerson ? { responsiblePerson: ownerBinding.responsiblePerson } : {}),
       };
     });
 
@@ -2267,8 +2282,42 @@ export async function handleChannelRoutes(
 
   if (url.pathname === '/api/channels/binding' && req.method === 'PUT') {
     try {
-      const body = await parseJsonBody<{ channelType: string; accountId: string; agentId: string }>(req);
-      await assignChannelAccountToAgent(body.agentId, toOpenClawChannelType(body.channelType), body.accountId);
+      const body = await parseJsonBody<{
+        channelType: string;
+        accountId?: string;
+        agentId?: string;
+        teamId?: string;
+        responsiblePerson?: string;
+      }>(req);
+      const storedChannelType = toOpenClawChannelType(body.channelType);
+      const accountId = (body.accountId || 'default').trim() || 'default';
+      const agentId = body.agentId?.trim();
+      const teamId = body.teamId?.trim();
+      const responsiblePerson = body.responsiblePerson?.trim();
+
+      if (!agentId && !teamId && !responsiblePerson) {
+        sendJson(res, 400, { success: false, error: 'agentId, teamId, or responsiblePerson is required' });
+        return true;
+      }
+
+      if (agentId && teamId) {
+        sendJson(res, 400, { success: false, error: 'agentId and teamId are mutually exclusive' });
+        return true;
+      }
+
+      if (agentId) {
+        await assignChannelAccountToAgent(agentId, storedChannelType, accountId);
+      } else {
+        await clearChannelBinding(storedChannelType, accountId);
+      }
+
+      await upsertChannelOwnerBinding({
+        channelType: storedChannelType,
+        accountId,
+        ...(agentId ? { agentId } : {}),
+        ...(teamId ? { teamId } : {}),
+        ...(responsiblePerson ? { responsiblePerson } : {}),
+      });
       scheduleGatewayChannelSaveRefresh(ctx, body.channelType, `channel:setBinding:${body.channelType}`);
       sendJson(res, 200, { success: true });
     } catch (error) {
@@ -2280,7 +2329,10 @@ export async function handleChannelRoutes(
   if (url.pathname === '/api/channels/binding' && req.method === 'DELETE') {
     try {
       const body = await parseJsonBody<{ channelType: string; accountId: string }>(req);
-      await clearChannelBinding(toOpenClawChannelType(body.channelType), body.accountId);
+      const storedChannelType = toOpenClawChannelType(body.channelType);
+      const accountId = (body.accountId || 'default').trim() || 'default';
+      await clearChannelBinding(storedChannelType, accountId);
+      await clearChannelOwnerBinding(storedChannelType, accountId);
       scheduleGatewayChannelSaveRefresh(ctx, body.channelType, `channel:clearBinding:${body.channelType}`);
       sendJson(res, 200, { success: true });
     } catch (error) {
@@ -3085,10 +3137,12 @@ export async function handleChannelRoutes(
       if (accountId) {
         await deleteChannelAccountConfig(channelType, accountId);
         await clearChannelBinding(channelType, accountId);
+        await clearChannelOwnerBinding(channelType, accountId);
         scheduleGatewayChannelRestart(ctx, `channel:deleteConfig:${channelType}:${accountId}`);
       } else {
         await deleteChannelConfig(channelType);
         await clearAllBindingsForChannel(channelType);
+        await clearAllChannelOwnerBindingsForChannel(channelType);
         scheduleGatewayChannelRestart(ctx, `channel:deleteConfig:${channelType}`);
       }
       sendJson(res, 200, { success: true });

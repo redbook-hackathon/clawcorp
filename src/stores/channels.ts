@@ -6,7 +6,6 @@ import { create } from 'zustand';
 import { hostApiFetch } from '@/lib/host-api';
 import {
   pickChannelRuntimeStatus,
-  isChannelRuntimeConnected,
   type ChannelRuntimeAccountSnapshot,
 } from '@/lib/channel-status';
 import { toOpenClawChannelType, toUiChannelType } from '@/lib/channel-alias';
@@ -55,7 +54,8 @@ export const useChannelsStore = create<ChannelsState>((set, get) => ({
   fetchChannels: async () => {
     set({ loading: true, error: null });
     try {
-      const data = await useGatewayStore.getState().rpc<{
+      const [data, channelAccountsPayload] = await Promise.all([
+        useGatewayStore.getState().rpc<{
           channelOrder?: string[];
           channels?: Record<string, unknown>;
           channelAccounts?: Record<string, Array<{
@@ -75,7 +75,32 @@ export const useChannelsStore = create<ChannelsState>((set, get) => ({
             } | null;
           }>>;
           channelDefaultAccountId?: Record<string, string>;
-      }>('channels.status', { probe: true });
+        }>('channels.status', { probe: true }),
+        hostApiFetch<{
+          success?: boolean;
+          channels?: Array<{
+            channelType: string;
+            accounts: Array<{
+              accountId: string;
+              agentId?: string;
+              teamId?: string;
+              responsiblePerson?: string;
+            }>;
+          }>;
+        }>('/api/channels/accounts').catch(() => ({ channels: [] })),
+      ]);
+
+      const ownerByAccountKey = new Map<string, { agentId?: string; teamId?: string; responsiblePerson?: string }>();
+      for (const channelEntry of channelAccountsPayload.channels || []) {
+        for (const account of channelEntry.accounts || []) {
+          ownerByAccountKey.set(`${channelEntry.channelType}:${account.accountId || 'default'}`, {
+            ...(account.agentId ? { agentId: account.agentId } : {}),
+            ...(account.teamId ? { teamId: account.teamId } : {}),
+            ...(account.responsiblePerson ? { responsiblePerson: account.responsiblePerson } : {}),
+          });
+        }
+      }
+
       if (data) {
         const channels: Channel[] = [];
 
@@ -96,10 +121,6 @@ export const useChannelsStore = create<ChannelsState>((set, get) => ({
           const accounts = data.channelAccounts?.[channelId] || [];
           const defaultAccountId = data.channelDefaultAccountId?.[channelId];
           const summarySignal = summary as { error?: string; lastError?: string } | undefined;
-          const primaryAccount =
-            (defaultAccountId ? accounts.find((a) => a.accountId === defaultAccountId) : undefined) ||
-            accounts.find((a) => isChannelRuntimeConnected(a as ChannelRuntimeAccountSnapshot)) ||
-            accounts[0];
           const status: Channel['status'] = pickChannelRuntimeStatus(accounts as ChannelRuntimeAccountSnapshot[], summarySignal);
           const summaryError =
             typeof summarySignal?.error === 'string'
@@ -124,12 +145,16 @@ export const useChannelsStore = create<ChannelsState>((set, get) => ({
           for (const account of accountEntries) {
             const accountId = account.accountId || defaultAccountId || 'default';
             const accountStatus = pickChannelRuntimeStatus([account as ChannelRuntimeAccountSnapshot], summarySignal);
+            const owner = ownerByAccountKey.get(`${uiChannelId}:${accountId}`);
             channels.push({
               id: `${uiChannelId}-${accountId}`,
               type: uiChannelId,
               name: account.name || CHANNEL_NAMES[uiChannelId] || uiChannelId,
               status: accountStatus,
               accountId,
+              ...(owner?.agentId ? { boundAgentId: owner.agentId } : {}),
+              ...(owner?.teamId ? { boundTeamId: owner.teamId } : {}),
+              ...(owner?.responsiblePerson ? { responsiblePerson: owner.responsiblePerson } : {}),
               error:
                 (typeof account.lastError === 'string' ? account.lastError : undefined) ||
                 (typeof summaryError === 'string' ? summaryError : undefined),

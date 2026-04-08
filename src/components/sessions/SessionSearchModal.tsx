@@ -50,7 +50,6 @@ export function SessionSearchModal({ isOpen, onClose }: SessionSearchModalProps)
 
   const sessions = useChatStore((state) => state.sessions);
   const currentSessionKey = useChatStore((state) => state.currentSessionKey);
-  const sessionLabels = useChatStore((state) => state.sessionLabels);
   const sessionLastActivity = useChatStore((state) => state.sessionLastActivity);
   const messages = useChatStore((state) => state.messages);
   const switchSession = useChatStore((state) => state.switchSession);
@@ -149,7 +148,7 @@ export function SessionSearchModal({ isOpen, onClose }: SessionSearchModalProps)
     // Add regular sessions with search results
     for (const searchResult of sessionSearchResults) {
       const session = searchResult.session;
-      const label = resolveSessionDisplayLabel(session, sessionLabels);
+      const label = resolveSessionDisplayLabel(session, agents);
       const isPinned = pinnedSessionKeySet.has(session.key);
       const isActive = currentSessionKey === session.key;
 
@@ -194,7 +193,7 @@ export function SessionSearchModal({ isOpen, onClose }: SessionSearchModalProps)
       // Regular sessions before channel sessions
       return left.type === 'session' ? -1 : 1;
     });
-  }, [sessionSearchResults, filteredChannelSessions, sessionLabels, pinnedSessionKeySet, currentSessionKey, sessionLastActivity]);
+  }, [sessionSearchResults, filteredChannelSessions, agents, pinnedSessionKeySet, currentSessionKey, sessionLastActivity]);
 
   // Handle ESC key
   useEffect(() => {

@@ -1,20 +1,16 @@
 import { useEffect, useState, useMemo } from 'react';
 import {
-  Bell,
-  Bot,
   ChevronRight,
   LayoutDashboard,
   MessageSquare,
   Network,
   PanelLeft,
   PanelLeftClose,
-  Pin,
   Plus,
   Radio,
   Search,
   Settings as SettingsIcon,
   Store,
-  Trash2,
   Users,
 } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -31,11 +27,8 @@ import { useChatStore } from '@/stores/chat';
 import { useGatewayStore } from '@/stores/gateway';
 import { useSettingsStore } from '@/stores/settings';
 import { useRightPanelStore } from '@/stores/rightPanelStore';
-import { CHANNEL_ICONS, type Channel } from '@/types/channel';
 import { ChannelIcon } from '@/components/channels/ChannelIcon';
 
-const CHAT_REQUEST_FILE_UPLOAD_EVENT = 'chat:request-file-upload';
-const CHAT_UPLOAD_PENDING_KEY = 'clawcorp:pending-upload';
 const NICKNAME_STORAGE_KEY = 'clawcorp-user-nickname';
 const LEGACY_NICKNAME_STORAGE_KEY = 'clawx-user-nickname';
 const AVATAR_STORAGE_KEY = 'clawcorp-user-avatar';
@@ -190,7 +183,6 @@ export function Sidebar() {
 
   const sessions = useChatStore((state) => state.sessions);
   const currentSessionKey = useChatStore((state) => state.currentSessionKey);
-  const sessionLabels = useChatStore((state) => state.sessionLabels);
   const sessionLastActivity = useChatStore((state) => state.sessionLastActivity);
   const messages = useChatStore((state) => state.messages);
   const switchSession = useChatStore((state) => state.switchSession);
@@ -337,7 +329,7 @@ export function Sidebar() {
 
   const searchSessionsData = sessions.map((session) => ({
     key: session.key,
-    label: resolveSessionDisplayLabel(session, sessionLabels),
+    label: resolveSessionDisplayLabel(session, agents),
   }));
 
   const searchAgents = agents.map((agent) => ({
@@ -349,16 +341,6 @@ export function Sidebar() {
     reportsTo: agent.reportsTo,
     isDefault: agent.isDefault,
   }));
-
-  const handleUploadClick = () => {
-    try {
-      sessionStorage.setItem(CHAT_UPLOAD_PENDING_KEY, '1');
-    } catch {
-      // ignore storage write issues
-    }
-    navigate('/');
-    window.dispatchEvent(new CustomEvent(CHAT_REQUEST_FILE_UPLOAD_EVENT));
-  };
 
   const handleNewSession = () => {
     setSessionsOpen(true);
@@ -542,7 +524,7 @@ export function Sidebar() {
               {sortedSessions.length > 0 ? (
                 <div className="space-y-2">
                   {sortedSessions.map((session) => {
-                    const label = resolveSessionDisplayLabel(session, sessionLabels);
+                    const label = resolveSessionDisplayLabel(session, agents);
                     const isPinned = pinnedSessionKeySet.has(session.key);
                     const isActive = currentSessionKey === session.key;
                     const messagePreview = getMessagePreview(session.key);

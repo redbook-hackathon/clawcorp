@@ -6,7 +6,7 @@
  */
 import { useEffect, useMemo, useRef, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { AlertCircle, Loader2, Sparkles, PanelRight, FileText, Bot } from 'lucide-react';
+import { AlertCircle, Loader2, Sparkles, FileText, Bot } from 'lucide-react';
 import { useChatStore, type RawMessage } from '@/stores/chat';
 import { hostApiFetch } from '@/lib/host-api';
 import { toast } from 'sonner';
@@ -38,7 +38,6 @@ export function Chat() {
   const gatewayStatus = useGatewayStore((s) => s.status);
   const isGatewayRunning = gatewayStatus.state === 'running';
   const rightPanelMode = useSettingsStore((s) => s.rightPanelMode);
-  const setRightPanelMode = useSettingsStore((s) => s.setRightPanelMode);
   const openPanel = useRightPanelStore((s) => s.openPanel);
 
   const messages = useChatStore((s) => s.messages);
@@ -150,7 +149,7 @@ export function Chat() {
   const isEmpty = messages.length === 0 && !sending;
 
   const [extracting, setExtracting] = useState(false);
-  const handleExtractMemory = useCallback(async () => {
+  const _handleExtractMemory = useCallback(async () => {
     if (extracting || messages.length < 2) return;
     setExtracting(true);
     try {
@@ -200,6 +199,9 @@ export function Chat() {
             onClick={() => setAgentPickerOpen((v) => !v)}
             className="flex items-center gap-1 rounded-lg px-2 py-1 transition-colors hover:bg-[#f2f2f7]"
           >
+            {currentAgent?.avatar ? (
+              <img src={currentAgent.avatar} alt="" className="h-5 w-5 rounded-full object-cover" />
+            ) : null}
             <h1 className="truncate text-[15px] font-semibold text-foreground">
               {currentAgentName}
             </h1>
@@ -230,7 +232,11 @@ export function Chat() {
                       agent.id === currentAgentId && 'bg-[#f2f2f7] font-medium',
                     )}
                   >
-                    <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-clawcorp-ac text-[11px] text-white">✦</span>
+                    {agent.avatar ? (
+                      <img src={agent.avatar} alt="" className="h-6 w-6 shrink-0 rounded-full object-cover" />
+                    ) : (
+                      <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-clawcorp-ac text-[11px] text-white">✦</span>
+                    )}
                     <span className="min-w-0 flex-1 truncate">{agent.name}</span>
                     {agent.id === currentAgentId && <span className="shrink-0 text-[10px] text-clawcorp-ac">✓</span>}
                   </button>
@@ -283,6 +289,7 @@ export function Chat() {
                         key={msg.id || `msg-${idx}`}
                         message={msg}
                         showThinking={showThinking}
+                        agentAvatar={currentAgent?.avatar}
                       />
                     ))}
 
@@ -304,6 +311,7 @@ export function Chat() {
                         isStreaming
                         streamingTools={streamingTools}
                         autoExpandThinking={hasStreamThinking}
+                        agentAvatar={currentAgent?.avatar}
                       />
                     )}
 

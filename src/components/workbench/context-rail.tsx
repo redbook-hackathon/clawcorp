@@ -28,7 +28,6 @@ export function ContextRail() {
   const currentAgentId = useChatStore((s) => s.currentAgentId);
   const currentSessionKey = useChatStore((s) => s.currentSessionKey);
   const sessions = useChatStore((s) => s.sessions);
-  const sessionLabels = useChatStore((s) => s.sessionLabels);
   const sessionLastActivity = useChatStore((s) => s.sessionLastActivity);
   const deleteSession = useChatStore((s) => s.deleteSession);
   const newSession = useChatStore((s) => s.newSession);
@@ -57,7 +56,7 @@ export function ContextRail() {
     () => sessions.find((session) => session.key === currentSessionKey) ?? null,
     [currentSessionKey, sessions],
   );
-  const currentSessionLabel = resolveSessionDisplayLabel(currentSession, sessionLabels) || currentSessionKey;
+  const currentSessionLabel = resolveSessionDisplayLabel(currentSession, agents);
   const currentSessionActivity = sessionLastActivity[currentSessionKey]
     ?? currentSession?.updatedAt
     ?? null;

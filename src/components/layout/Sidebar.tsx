@@ -24,6 +24,7 @@ import { SessionItem } from '@/components/sessions/SessionItem';
 import { SessionSearchModal } from '@/components/sessions/SessionSearchModal';
 import { cn } from '@/lib/utils';
 import { usePinnedSessions } from '@/lib/pinned-sessions';
+import { resolveSessionDisplayLabel } from '@/lib/session-label';
 import { useAgentsStore } from '@/stores/agents';
 import { useChannelsStore } from '@/stores/channels';
 import { useChatStore } from '@/stores/chat';
@@ -46,19 +47,6 @@ type NavItemConfig = {
   path: string;
   icon: typeof LayoutDashboard;
 };
-
-function prefixChannelSessionLabel(sessionKey: string, label: string): string {
-  if (label.startsWith('[')) {
-    return label;
-  }
-  if (/^agent:[^:]+:feishu:/.test(sessionKey)) {
-    return `[飞书] ${label}`;
-  }
-  if (/^agent:[^:]+:wechat:/.test(sessionKey)) {
-    return `[微信] ${label}`;
-  }
-  return label;
-}
 
 function SectionHeader({
   icon: Icon,
@@ -349,7 +337,7 @@ export function Sidebar() {
 
   const searchSessionsData = sessions.map((session) => ({
     key: session.key,
-    label: sessionLabels[session.key] ?? session.label ?? session.displayName ?? session.key,
+    label: resolveSessionDisplayLabel(session, sessionLabels),
   }));
 
   const searchAgents = agents.map((agent) => ({
@@ -554,18 +542,7 @@ export function Sidebar() {
               {sortedSessions.length > 0 ? (
                 <div className="space-y-2">
                   {sortedSessions.map((session) => {
-                    const sessionAgent = agents.find(
-                      (a) => a.id === (session.targetAgentId ?? session.agentId),
-                    );
-                    const label =
-                      prefixChannelSessionLabel(
-                        session.key,
-                        sessionLabels[session.key] ??
-                        session.label ??
-                        sessionAgent?.name ??
-                        session.displayName ??
-                        session.key,
-                      );
+                    const label = resolveSessionDisplayLabel(session, sessionLabels);
                     const isPinned = pinnedSessionKeySet.has(session.key);
                     const isActive = currentSessionKey === session.key;
                     const messagePreview = getMessagePreview(session.key);

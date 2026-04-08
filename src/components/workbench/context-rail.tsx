@@ -12,6 +12,7 @@ import {
 } from '@/lib/chat-session-export';
 import { hostApiFetch } from '@/lib/host-api';
 import { usePinnedSessions } from '@/lib/pinned-sessions';
+import { resolveSessionDisplayLabel } from '@/lib/session-label';
 import { toast } from 'sonner';
 
 export function ContextRail() {
@@ -56,10 +57,7 @@ export function ContextRail() {
     () => sessions.find((session) => session.key === currentSessionKey) ?? null,
     [currentSessionKey, sessions],
   );
-  const currentSessionLabel = sessionLabels[currentSessionKey]
-    ?? currentSession?.label
-    ?? currentSession?.displayName
-    ?? currentSessionKey;
+  const currentSessionLabel = resolveSessionDisplayLabel(currentSession, sessionLabels) || currentSessionKey;
   const currentSessionActivity = sessionLastActivity[currentSessionKey]
     ?? currentSession?.updatedAt
     ?? null;

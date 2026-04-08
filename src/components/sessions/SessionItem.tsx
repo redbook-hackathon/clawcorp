@@ -17,6 +17,7 @@ interface SessionItemProps {
   isPinned: boolean;
   isActive: boolean;
   messagePreview?: string;
+  agentAvatar?: string | null;
   onClick: () => void;
   onPinToggle: () => void;
   onDelete: () => void;
@@ -28,14 +29,12 @@ export function SessionItem({
   isPinned,
   isActive,
   messagePreview,
+  agentAvatar,
   onClick,
   onPinToggle,
   onDelete,
 }: SessionItemProps) {
   const initials = label.slice(0, 1).toUpperCase();
-  const displayName = session.isTeamSession && session.teamName
-    ? `团队${session.teamName}：${label}`
-    : label;
   const relativeTime = formatRelativeTime(session.updatedAt);
 
   // Agent status color (D-18)
@@ -64,9 +63,13 @@ export function SessionItem({
         {/* Avatar with status indicator (D-18) */}
         <div className="relative shrink-0">
           <Avatar className="h-10 w-10">
-            <AvatarFallback className="bg-muted text-sm font-medium">
-              {initials}
-            </AvatarFallback>
+            {agentAvatar ? (
+              <img src={agentAvatar} alt="" className="object-cover" />
+            ) : (
+              <AvatarFallback className="bg-muted text-sm font-medium">
+                {initials}
+              </AvatarFallback>
+            )}
           </Avatar>
           {/* Agent status dot with white ring */}
           <div
@@ -83,7 +86,7 @@ export function SessionItem({
           <div className="flex items-center gap-2 mb-0.5">
             <div className="flex items-center gap-1.5 min-w-0 flex-1">
               <span className="truncate text-sm font-medium text-[#000000]">
-                {displayName}
+                {label}
               </span>
               {session.isPrivateChat && session.isLeaderChat && (
                 <span className="inline-flex items-center gap-1 rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-medium text-amber-800">

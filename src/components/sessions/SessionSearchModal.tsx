@@ -7,7 +7,6 @@
 import { useEffect, useState, useMemo } from 'react';
 import { Search, X, Radio } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { cn } from '@/lib/utils';
 import { searchSessionsWithContext, type SessionSearchResult } from '@/lib/session-search';
 import { SessionItem } from './SessionItem';
 import { useChatStore } from '@/stores/chat';
@@ -16,6 +15,7 @@ import { useChannelsStore } from '@/stores/channels';
 import { usePinnedSessions } from '@/lib/pinned-sessions';
 import { hostApiFetch } from '@/lib/host-api';
 import type { ChannelSyncSession } from '@/types/channel-sync';
+import { resolveSessionDisplayLabel } from '@/lib/session-label';
 
 interface SessionSearchModalProps {
   isOpen: boolean;
@@ -149,7 +149,7 @@ export function SessionSearchModal({ isOpen, onClose }: SessionSearchModalProps)
     // Add regular sessions with search results
     for (const searchResult of sessionSearchResults) {
       const session = searchResult.session;
-      const label = sessionLabels[session.key] ?? session.label ?? session.displayName ?? session.key;
+      const label = resolveSessionDisplayLabel(session, sessionLabels);
       const isPinned = pinnedSessionKeySet.has(session.key);
       const isActive = currentSessionKey === session.key;
 

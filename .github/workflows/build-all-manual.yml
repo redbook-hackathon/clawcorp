@@ -1,0 +1,266 @@
+# ClawCorp Build All Platforms (Manual)
+# Manually trigger to build Windows, Linux, and macOS installers
+# without publishing to GitHub Releases or OSS.
+# Artifacts are downloadable from the Actions run page.
+
+name: Build All Platforms (Manual)
+
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: 'Git ref to build (branch, tag, or SHA). Leave empty for default branch.'
+        required: false
+        default: ''
+      platforms:
+        description: 'Platforms to build (comma-separated: win,linux,mac or "all")'
+        required: false
+        default: 'all'
+
+permissions:
+  contents: read
+
+jobs:
+  # ── Determine build matrix ──────────────────────────────────────
+  setup:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - name: Build matrix from inputs
+        id: set-matrix
+        run: |
+          PLATFORMS="${{ inputs.platforms }}"
+          if [ "$PLATFORMS" = "all" ] || [ -z "$PLATFORMS" ]; then
+            PLATFORMS="win,linux,mac"
+          fi
+
+          MATRIX='{"include":['
+          FIRST=true
+
+          if echo "$PLATFORMS" | grep -q "win"; then
+            [ "$FIRST" = "false" ] && MATRIX="$MATRIX,"
+            MATRIX="$MATRIX"'{"os":"windows-latest","platform":"win","name":"Windows"}'
+            FIRST=false
+          fi
+
+          if echo "$PLATFORMS" | grep -q "linux"; then
+            [ "$FIRST" = "false" ] && MATRIX="$MATRIX,"
+            MATRIX="$MATRIX"'{"os":"ubuntu-latest","platform":"linux","name":"Linux"}'
+            FIRST=false
+          fi
+
+          if echo "$PLATFORMS" | grep -q "mac"; then
+            [ "$FIRST" = "false" ] && MATRIX="$MATRIX,"
+            MATRIX="$MATRIX"'{"os":"macos-latest","platform":"mac","name":"macOS"}'
+            FIRST=false
+          fi
+
+          MATRIX="$MATRIX]}"
+          echo "matrix=$MATRIX" >> $GITHUB_OUTPUT
+          echo "Build matrix: $MATRIX"
+
+  # ── Build job ───────────────────────────────────────────────────
+  build:
+    needs: setup
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.setup.outputs.matrix) }}
+
+    runs-on: ${{ matrix.os }}
+    name: Build ${{ matrix.name }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref || github.ref }}
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+      - name: Setup pnpm cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Cache electron-builder
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/electron
+            ~/.cache/electron-builder
+            ~/AppData/Local/electron/Cache
+            ~/AppData/Local/electron-builder/Cache
+            ~/Library/Caches/electron
+            ~/Library/Caches/electron-builder
+          key: ${{ runner.os }}-electron-builder-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-electron-builder-
+
+      - name: Disable npmmirror for CI environments
+        shell: bash
+        run: |
+          sed -i.bak '/electron_mirror/d' .npmrc || true
+          sed -i.bak '/electron_builder_binaries_mirror/d' .npmrc || true
+          rm -f .npmrc.bak || true
+
+      - name: Install dependencies
+        run: pnpm install
+
+      # Download platform-specific uv binaries
+      - name: Download uv binaries (macOS)
+        if: matrix.platform == 'mac'
+        run: pnpm run uv:download:mac
+
+      - name: Download uv binaries (Windows)
+        if: matrix.platform == 'win'
+        run: pnpm run uv:download:win
+
+      - name: Download uv binaries (Linux)
+        if: matrix.platform == 'linux'
+        run: pnpm run uv:download:linux
+
+      # Build
+      - name: Build macOS
+        if: matrix.platform == 'mac'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # No code signing for manual builds (unless secrets are configured)
+          CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+        run: |
+          ulimit -n 65536
+          pnpm run package:mac:ci
+
+      - name: Build Windows
+        if: matrix.platform == 'win'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NODE_OPTIONS: --max_old_space_size=6144
+        run: |
+          pnpm run package:prepare
+          # Use pnpm's binary resolution instead of npx/npm on Windows.
+          # This keeps electron-builder running under the pnpm-managed install
+          # and avoids npm-based dependency tree collection fallbacks.
+          pnpm exec electron-builder --win --x64 --publish never
+          pnpm exec electron-builder --win --arm64 --publish never
+
+      - name: Build Linux
+        if: matrix.platform == 'linux'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: pnpm run package:linux:ci
+
+      # ── Upload artifacts ────────────────────────────────────────────
+      # Linux: split by format × arch so each file is downloadable individually.
+      - name: Upload Linux deb (x64 / amd64)
+        if: matrix.platform == 'linux'
+        uses: actions/upload-artifact@v4
+        with:
+          name: ClawCorp-linux-deb-x64
+          path: |
+            release/*amd64*.deb
+            release/*x86_64*.deb
+          if-no-files-found: warn
+          retention-days: 14
+
+      - name: Upload Linux deb (arm64)
+        if: matrix.platform == 'linux'
+        uses: actions/upload-artifact@v4
+        with:
+          name: ClawCorp-linux-deb-arm64
+          path: release/*arm64*.deb
+          if-no-files-found: warn
+          retention-days: 14
+
+      - name: Upload Linux AppImage (x64)
+        if: matrix.platform == 'linux'
+        uses: actions/upload-artifact@v4
+        with:
+          name: ClawCorp-linux-AppImage-x64
+          path: |
+            release/*x86_64*.AppImage
+            release/*amd64*.AppImage
+          if-no-files-found: warn
+          retention-days: 14
+
+      - name: Upload Linux AppImage (arm64)
+        if: matrix.platform == 'linux'
+        uses: actions/upload-artifact@v4
+        with:
+          name: ClawCorp-linux-AppImage-arm64
+          path: release/*arm64*.AppImage
+          if-no-files-found: warn
+          retention-days: 14
+
+      - name: Upload Linux RPM (x64)
+        if: matrix.platform == 'linux'
+        uses: actions/upload-artifact@v4
+        with:
+          name: ClawCorp-linux-rpm-x64
+          path: release/*x86_64*.rpm
+          if-no-files-found: warn
+          retention-days: 14
+
+      # Windows / macOS: keep original combined uploads
+      - name: Upload ${{ matrix.name }} Installers (x64)
+        if: matrix.platform != 'linux'
+        uses: actions/upload-artifact@v4
+        with:
+          name: ClawCorp-${{ matrix.platform }}-x64
+          path: |
+            release/*x64*.dmg
+            release/*x64*.zip
+            release/*x64*.exe
+            release/*x64*.blockmap
+            release/*.yml
+            !release/builder-debug.yml
+          if-no-files-found: warn
+          retention-days: 14
+
+      - name: Upload ${{ matrix.name }} Installers (arm64)
+        if: matrix.platform != 'linux'
+        uses: actions/upload-artifact@v4
+        with:
+          name: ClawCorp-${{ matrix.platform }}-arm64
+          path: |
+            release/*arm64*.dmg
+            release/*arm64*.zip
+            release/*arm64*.exe
+            release/*arm64*.blockmap
+          if-no-files-found: warn
+          retention-days: 14
+
+  # ── Summary ─────────────────────────────────────────────────────
+  summary:
+    needs: build
+    runs-on: ubuntu-latest
+    if: always()
+
+    steps:
+      - name: Build Summary
+        run: |
+          echo "## 🏗️ Build Complete" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "All requested platform builds have finished." >> $GITHUB_STEP_SUMMARY
+          echo "Download the installers from the **Artifacts** section above." >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Platform | Artifact Name |" >> $GITHUB_STEP_SUMMARY
+          echo "|----------|---------------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Windows  | \`ClawCorp-win\`  |" >> $GITHUB_STEP_SUMMARY
+          echo "| Linux    | \`ClawCorp-linux\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| macOS    | \`ClawCorp-mac\`  |" >> $GITHUB_STEP_SUMMARY

@@ -1,0 +1,19 @@
+{
+  "project": "ClawCorp",
+  "branchName": "ralph/example-feature",
+  "description": "Example Ralph workload for Codex",
+  "userStories": [
+    {
+      "id": "US-001",
+      "title": "Add a small focused change",
+      "description": "As a user, I want one clearly scoped story per iteration.",
+      "acceptanceCriteria": [
+        "Implement the requested change",
+        "Typecheck passes"
+      ],
+      "priority": 1,
+      "passes": false,
+      "notes": ""
+    }
+  ]
+}

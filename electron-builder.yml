@@ -1,0 +1,192 @@
+﻿appId: app.clawcorp.desktop
+productName: ClawCorp
+copyright: Copyright 漏 2026 ClawCorp
+compression: maximum
+artifactName: ${productName}-${version}-${os}-${arch}.${ext}
+
+directories:
+  output: release
+  buildResources: resources
+
+files:
+  - dist
+  - dist-electron
+  - package.json
+
+extraResources:
+  - from: resources/
+    to: resources/
+    filter:
+      - "**/*"
+      - "!icons/*.md"
+      - "!icons/*.svg"
+      - "!bin/**"
+      - "!screenshot/**"
+  # OpenClaw package (node_modules copied separately by afterPack hook
+  # because electron-builder respects .gitignore which excludes node_modules/)
+  - from: build/openclaw/
+    to: openclaw/
+  # Pre-bundled third-party skills (full directories, not only SKILL.md)
+  - from: build/preinstalled-skills/
+    to: resources/preinstalled-skills/
+  # NOTE: OpenClaw plugin mirrors (dingtalk, etc.) are bundled by the
+  # afterPack hook (after-pack.cjs) directly from node_modules, so they
+  # don't need an extraResources entry here.
+
+beforePack: ./scripts/before-pack.cjs
+afterPack: ./scripts/after-pack.cjs
+
+asar: true
+asarUnpack:
+  - "**/*.node"
+
+# Disable native module rebuilding.
+# The Electron renderer/main process has no native (.node) dependencies.
+# All native modules (opus, sharp, koffi 鈥? belong to openclaw, which is
+# bundled separately (bundle-openclaw.mjs 鈫?extraResources) and runs in its
+# own process 鈥?@electron/rebuild must NOT touch them.
+npmRebuild: false
+
+# Auto-update configuration
+# Runtime channel/feed selection is main-owned in electron/main/updater.ts.
+# Auto-update checks use the OSS generic feed only; GitHub release publication is
+# handled separately by .github/workflows/release.yml and is not used as a runtime
+# autoUpdater fallback.
+publish:
+  - provider: generic
+    url: https://oss.intelli-spectrum.com/latest
+    useMultipleRangeRequest: false
+
+# macOS Configuration
+mac:
+  extraResources:
+    - from: resources/bin/darwin-${arch}
+      to: bin
+    - from: resources/cli/posix/
+      to: cli/
+  category: public.app-category.productivity
+  icon: resources/icons/icon.icns
+  target:
+    - target: dmg
+      arch:
+        - x64
+        - arm64
+    - target: zip
+      arch:
+        - x64
+        - arm64
+  darkModeSupport: true
+  hardenedRuntime: true
+  gatekeeperAssess: false
+  entitlements: entitlements.mac.plist
+  entitlementsInherit: entitlements.mac.plist
+  notarize: true
+  extendInfo:
+    NSMicrophoneUsageDescription: ClawCorp requires microphone access for voice features
+    NSCameraUsageDescription: ClawCorp requires camera access for video features
+
+dmg:
+  background: resources/dmg-background.png
+  icon: resources/icons/icon.icns
+  iconSize: 100
+  window:
+    width: 540
+    height: 380
+  contents:
+    - type: file
+      x: 130
+      y: 220
+    - type: link
+      path: /Applications
+      x: 410
+      y: 220
+
+# Windows Configuration
+win:
+  # Skip update signature verification: we ship via OSS + GitHub without a
+  # code-signing certificate, so verifying would always fail on the updater.
+  verifyUpdateCodeSignature: false
+  # Unsigned local/CI Windows builds must not invoke the winCodeSign/rcedit
+  # toolchain, which extracts symlinks and fails on hosts without that privilege.
+  signAndEditExecutable: false
+  extraResources:
+    - from: resources/bin/win32-${arch}
+      to: bin
+    - from: resources/cli/win32/
+      to: cli/
+  icon: resources/icons/icon.ico
+  target:
+    - target: nsis
+      arch:
+        - x64
+        - arm64
+
+nsis:
+  oneClick: false
+  perMachine: false
+  warningsAsErrors: false
+  allowToChangeInstallationDirectory: true
+  deleteAppDataOnUninstall: false
+  differentialPackage: true
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+  shortcutName: ClawCorp
+  uninstallDisplayName: ClawCorp
+  license: LICENSE
+  include: scripts/installer.nsh
+  installerIcon: resources/icons/icon.ico
+  uninstallerIcon: resources/icons/icon.ico
+
+# Linux Configuration
+linux:
+  extraResources:
+    - from: resources/bin/linux-${arch}
+      to: bin
+    - from: resources/cli/posix/
+      to: cli/
+  icon: resources/icons
+  target:
+    - target: AppImage
+      arch:
+        - x64
+        - arm64
+    - target: deb
+      arch:
+        - x64
+        - arm64
+    - target: rpm
+      arch:
+        - x64
+  category: Utility
+  maintainer: ClawCorp Team <public@valuecell.ai>
+  vendor: ClawCorp
+  synopsis: AI Assistant powered by OpenClaw
+  description: ClawCorp is a graphical AI assistant application that integrates with OpenClaw Gateway to provide intelligent automation and assistance across multiple messaging platforms.
+  desktop:
+    entry:
+      Name: ClawCorp
+      Comment: AI Assistant powered by OpenClaw
+      Categories: Utility;Network;
+      Keywords: ai;assistant;automation;chat;
+      StartupWMClass: clawcorp
+      # Note: --no-sandbox for Kylin V11 / UOS compatibility is injected at
+      # runtime via app.commandLine.appendSwitch() in electron/main/index.ts.
+      # electron-builder forbids setting Exec here (it auto-generates it).
+
+appImage:
+  license: LICENSE
+
+deb:
+  depends:
+    # Use OR syntax to support both Ubuntu 22.04 and Ubuntu 24.04 (t64 transition).
+    # Ubuntu 24.04 renamed many libraries with a t64 suffix (64-bit time_t ABI transition).
+    - libgtk-3-0 | libgtk-3-0t64
+    - libnotify4 | libnotify4t64
+    - libnss3
+    - libxss1 | libxss1t64
+    - libxtst6 | libxtst6t64
+    - xdg-utils
+    - libatspi2.0-0 | libatspi2.0-0t64
+    - libuuid1
+  afterInstall: scripts/linux/after-install.sh
+  afterRemove: scripts/linux/after-remove.sh

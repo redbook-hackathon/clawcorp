@@ -1,0 +1,223 @@
+/* FullCalendar Deep Customization - Complete Overhaul */
+
+/* Remove all default FullCalendar styling */
+.calendar-container .fc {
+  border: none;
+}
+
+/* Remove outer scrollgrid border - let container handle it */
+.fc.fc-theme-standard .fc-scrollgrid {
+  border: none !important;
+}
+
+/* 1. Grid Borders - Subtle and Light */
+.fc-theme-standard td,
+.fc-theme-standard th {
+  border-color: hsl(var(--border) / 0.6) !important;
+}
+
+/* 2. Today Cell - Shadcn Style with Circular Badge */
+/* Remove default background color */
+.fc .fc-day-today {
+  background-color: transparent !important;
+}
+
+/* Make today's date number a solid circle badge */
+.fc .fc-day-today .fc-daygrid-day-number {
+  background-color: hsl(var(--primary)) !important;
+  color: hsl(var(--primary-foreground)) !important;
+  border-radius: 9999px !important;
+  min-width: 28px !important;
+  height: 28px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin: 4px !important;
+  padding: 0 !important;
+  font-weight: 500 !important;
+}
+
+/* 3. Day Numbers */
+.fc-daygrid-day-number {
+  padding: 8px 12px !important;
+  font-size: 0.875rem !important;
+  color: hsl(var(--foreground)) !important;
+  font-weight: 500;
+}
+
+/* 4. Table Header - Weekday Names */
+.fc-col-header-cell {
+  background-color: transparent;
+  padding: 0.75rem 0.5rem;
+}
+
+.fc-col-header-cell-cushion {
+  padding: 12px 0 !important;
+  color: hsl(var(--muted-foreground)) !important;
+  font-weight: 500 !important;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+}
+
+/* 5. Day Cells */
+.fc-daygrid-day {
+  transition: background-color 0.2s;
+}
+
+.fc-daygrid-day:hover {
+  background-color: hsl(var(--accent) / 0.2);
+}
+
+/* Other month days (grayed out) */
+.fc-day-other .fc-daygrid-day-number {
+  color: hsl(var(--muted-foreground));
+  opacity: 0.4;
+}
+
+/* 6. Event Container - Remove All Default Styling */
+.fc-event {
+  border: none !important;
+  background: transparent !important;
+  margin: 2px 4px !important;
+  padding: 0 !important;
+}
+
+.fc-event-main {
+  padding: 0 !important;
+}
+
+.fc-event-main-frame {
+  padding: 0 !important;
+}
+
+/* 7. Event Spacing */
+.fc-daygrid-event-harness {
+  margin-bottom: 0.25rem;
+}
+
+.fc-daygrid-event {
+  border: none !important;
+  background: none !important;
+  padding: 0 !important;
+}
+
+/* 8. More Link */
+.fc-more-link {
+  color: hsl(var(--primary));
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.375rem;
+  transition: background-color 0.2s;
+  margin: 2px 4px;
+}
+
+.fc-more-link:hover {
+  background-color: hsl(var(--accent));
+  text-decoration: none;
+}
+
+/* 9. Popover for "more" events */
+.fc-popover {
+  border: 1px solid hsl(var(--border));
+  border-radius: 0.5rem;
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  background-color: hsl(var(--background));
+}
+
+.fc-popover-header {
+  background-color: hsl(var(--muted) / 0.5);
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid hsl(var(--border));
+  border-radius: 0.5rem 0.5rem 0 0;
+}
+
+.fc-popover-title {
+  font-weight: 600;
+  color: hsl(var(--foreground));
+  font-size: 0.875rem;
+}
+
+.fc-popover-close {
+  color: hsl(var(--muted-foreground));
+  opacity: 0.7;
+  transition: opacity 0.2s;
+  font-size: 1.25rem;
+}
+
+.fc-popover-close:hover {
+  opacity: 1;
+}
+
+.fc-popover-body {
+  padding: 0.5rem;
+}
+
+/* 10. Week View Specific */
+.fc-timegrid-slot {
+  height: 3rem;
+}
+
+.fc-timegrid-slot-label {
+  color: hsl(var(--muted-foreground));
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.fc-timegrid-axis {
+  border-color: hsl(var(--border) / 0.6) !important;
+}
+
+/* 11. Year View Grid */
+.fc-daygrid-body {
+  border-color: hsl(var(--border) / 0.6) !important;
+}
+
+/* 12. Scrollbar styling */
+.fc-scroller::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.fc-scroller::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.fc-scroller::-webkit-scrollbar-thumb {
+  background: hsl(var(--border));
+  border-radius: 4px;
+}
+
+.fc-scroller::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--muted-foreground) / 0.5);
+}
+
+/* 13. Remove any remaining default backgrounds */
+.fc-view-harness {
+  background: transparent;
+}
+
+.fc-scrollgrid-section-body > td {
+  background: transparent;
+}
+
+/* 14. Fix event positioning */
+.fc-daygrid-day-events {
+  margin-top: 0.25rem;
+}
+
+/* 15. Ensure proper text rendering */
+.fc-event-title {
+  font-weight: inherit;
+  color: inherit;
+}
+
+/* 16. Remove focus outlines (we have custom hover) */
+.fc-event:focus {
+  outline: none;
+}
+
+.fc-daygrid-day-frame:focus {
+  outline: none;
+}

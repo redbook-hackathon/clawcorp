@@ -1,0 +1,185 @@
+{
+    "title": "Skills",
+    "subtitle": "Browse and manage AI capabilities",
+    "refresh": "Refresh",
+    "openFolder": "Open Skills Folder",
+    "gatewayWarning": "Gateway is not running. Skills cannot be loaded without an active Gateway.",
+    "tabs": {
+        "installed": "Installed",
+        "marketplace": "Marketplace"
+    },
+    "filter": {
+        "all": "All ({{count}})",
+        "builtIn": "Built-in ({{count}})",
+        "marketplace": "Marketplace ({{count}})"
+    },
+    "search": "Search skills...",
+    "searchMarketplace": "Search marketplace...",
+    "searchButton": "Search",
+    "actions": {
+        "enableVisible": "Enable Visible",
+        "disableVisible": "Disable Visible",
+        "installSkill": "Install Skills"
+    },
+    "noSkills": "No skills found",
+    "noSkillsSearch": "Try a different search term",
+    "noSkillsAvailable": "No skills available",
+    "detail": {
+        "info": "Information",
+        "config": "Configuration",
+        "description": "Description",
+        "version": "Version",
+        "author": "Author",
+        "source": "Source",
+        "coreSystem": "Core System",
+        "bundled": "Bundled",
+        "userInstalled": "User Installed",
+        "enabled": "Enabled",
+        "disabled": "Disabled",
+        "apiKey": "API Key",
+        "apiKeyPlaceholder": "Enter API Key (optional)",
+        "apiKeyDesc": "The primary API key for this skill. Leave blank if not required or configured elsewhere.",
+        "envVars": "Environment Variables",
+        "addVariable": "Add Variable",
+        "noEnvVars": "No environment variables configured.",
+        "keyPlaceholder": "KEY (e.g. BASE_URL)",
+        "valuePlaceholder": "VALUE",
+        "envNote": "Note: Rows with empty keys will be automatically removed during save.",
+        "saving": "Saving...",
+        "saveConfig": "Save Configuration",
+        "configSaved": "Configuration saved",
+        "openManual": "Open Manual",
+        "openActualFolder": "Open Actual Folder",
+        "copyPath": "Copy path",
+        "pathUnavailable": "Path not available",
+        "configurable": "Configurable",
+        "uninstall": "Uninstall",
+        "enable": "Enable",
+        "disable": "Disable"
+    },
+    "source": {
+        "badge": {
+            "bundled": "Bundled",
+            "managed": "Managed",
+            "workspace": "Workspace",
+            "extra": "Extra dirs",
+            "agentsPersonal": "Personal .agents",
+            "agentsProject": "Project .agents",
+            "unknown": "Unknown source"
+        }
+    },
+    "toast": {
+        "enabled": "Skill enabled",
+        "disabled": "Skill disabled",
+        "installed": "Skill installed and enabled",
+        "uninstalled": "Skill uninstalled successfully",
+        "openedEditor": "Opened in editor",
+        "failedEditor": "Failed to open editor",
+        "failedSave": "Failed to save configuration",
+        "failedOpenFolder": "Failed to open skills folder",
+        "failedInstall": "Failed to install",
+        "failedUninstall": "Failed to uninstall",
+        "failedFolderNotFound": "Skills folder does not exist yet. Install a skill first.",
+        "copiedPath": "Path copied",
+        "failedCopyPath": "Failed to copy path",
+        "failedOpenActualFolder": "Failed to open actual skill folder",
+        "searchTimeoutError": "Search timed out, check network. You can also search on ClawHub.ai, download the ZIP, and extract it to \"{{path}}\"",
+        "installTimeoutError": "Installation timed out, check network. You can also download the ZIP from ClawHub.ai and extract it to \"{{path}}\"",
+        "searchRateLimitError": "Search rate limit exceeded. You can also search on ClawHub.ai, download the ZIP, and extract it to \"{{path}}\"",
+        "installRateLimitError": "Installation rate limit exceeded. You can also download the ZIP from ClawHub.ai and extract it to \"{{path}}\"",
+        "fetchTimeoutError": "Fetching skills timed out, please check your network connection.",
+        "fetchRateLimitError": "Fetching skills rate limit exceeded, please try again later.",
+        "noBatchEnableTargets": "All visible skills are already enabled.",
+        "noBatchDisableTargets": "All visible skills are already disabled.",
+        "batchEnabled": "{{count}} skills enabled.",
+        "batchDisabled": "{{count}} skills disabled.",
+        "batchPartial": "Updated {{success}} / {{total}} skills. Some items failed."
+    },
+    "marketplace": {
+        "title": "Marketplace",
+        "installDialogTitle": "Install Skills",
+        "installDialogSubtitle": "Browse Explore by default, or enter keywords to search.",
+        "sourceLabel": "Source",
+        "sourceClawHub": "ClawHub",
+        "securityNote": "Click skill card to view its documentation and security information on ClawHub before installation.",
+        "manualInstallHint": "Network issues? You can always download skill ZIP archives from ClawHub.ai and extract them manually into \"{{path}}\".",
+        "searching": "Searching ClawHub...",
+        "noResults": "No skills found matching your search.",
+        "emptyPrompt": "Search for new skills to expand your capabilities.",
+        "searchError": "ClawHub search failed. Check your connection or installation."
+    },
+    "mcp": {
+        "title": "MCP services",
+        "description": "Manage MCP services ClawCorp can call; enable a service to expose its tools while keeping runtime controls and logs available.",
+        "dialog": {
+            "addTitle": "Add MCP service",
+            "editTitle": "Edit MCP service",
+            "subtitle": "Configure connection settings for local or remote MCP services that ClawCorp can call.",
+            "close": "Close",
+            "cancel": "Cancel",
+            "save": "Save",
+            "saving": "Saving...",
+            "fields": {
+                "name": "Name",
+                "transport": "Transport",
+                "command": "Command",
+                "args": "Arguments",
+                "url": "URL",
+                "env": "Environment variables"
+            },
+            "validation": {
+                "nameRequired": "Name is required",
+                "commandRequired": "A stdio server requires a command",
+                "urlRequired": "A remote server requires a URL"
+            }
+        },
+        "actions": {
+            "refresh": "Refresh services",
+            "addService": "Add service",
+            "enableService": "Enable service",
+            "disableService": "Disable service",
+            "edit": "Edit",
+            "delete": "Delete service",
+            "deleteConfirm": "Delete this MCP service?",
+            "refreshTools": "Refresh tools",
+            "runTool": "Run tool",
+            "runningTool": "Running...",
+            "loadLogs": "Load logs",
+            "loadingLogs": "Loading...",
+            "start": "start",
+            "connect": "connect",
+            "stop": "stop"
+        },
+        "empty": {
+            "title": "No MCP services configured",
+            "description": "Add a service to expose its tools, runtime controls, and logs here."
+        },
+        "panels": {
+            "toolsTitle": "Discovered tools",
+            "toolsDescription": "Inspect tool visibility and run one-off tool calls.",
+            "logsTitle": "Server logs",
+            "logsDescription": "Review recent runtime events and stderr for this service."
+        },
+        "fields": {
+            "tool": "Tool",
+            "argsJson": "Arguments JSON"
+        },
+        "states": {
+            "loading": "Loading...",
+            "connected": "connected",
+            "disconnected": "disconnected",
+            "pid": "pid {{pid}}",
+            "selectTool": "Select a tool first",
+            "invalidJson": "Tool arguments must be valid JSON",
+            "toolCallError": "Tool call returned an error",
+            "noTools": "No tools discovered yet. Start or connect the runtime first, then refresh tools.",
+            "noLogs": "No logs loaded yet."
+        },
+        "status": {
+            "stopped": "stopped",
+            "starting": "starting",
+            "running": "running",
+            "error": "error"
+        }
+    }
+}

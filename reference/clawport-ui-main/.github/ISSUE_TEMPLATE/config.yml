@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Contributing Guide
+    url: https://github.com/JohnRiceML/clawport-ui/blob/main/CONTRIBUTING.md
+    about: Read the contributing guide before opening an issue
+  - name: OpenClaw Issues
+    url: https://openclaw.ai
+    about: For issues with the OpenClaw runtime, gateway, or CLI (not ClawPort UI)

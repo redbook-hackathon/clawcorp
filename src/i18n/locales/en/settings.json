@@ -1,0 +1,659 @@
+{
+  "title": "Settings",
+  "subtitle": "Configure your ClawCorp experience",
+  "appearance": {
+    "title": "General",
+    "description": "Customize the look and feel",
+    "theme": "Theme",
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System",
+    "language": "Language",
+    "launchAtStartup": "Launch at system startup",
+    "launchAtStartupDesc": "Automatically launch ClawCorp when you log in"
+  },
+  "aiProviders": {
+    "title": "AI Providers",
+    "description": "Configure your AI model providers and API keys",
+    "overview": {
+      "title": "Provider Accounts",
+      "description": "A summary of the provider accounts and models currently configured.",
+      "noModelSelected": "No model selected",
+      "multiAccountReady": "Multi-account ready",
+      "singletonVendor": "Single-account vendor"
+    },
+    "authModes": {
+      "apiKey": "API Key",
+      "oauthDevice": "OAuth Device",
+      "oauthBrowser": "OAuth Browser",
+      "local": "Local"
+    },
+    "sections": {
+      "model": "Model Settings",
+      "fallback": "Fallback Settings"
+    },
+    "add": "Add Provider",
+    "custom": "Custom",
+    "notRequired": "Not required",
+    "empty": {
+      "title": "No providers configured",
+      "desc": "Add an AI provider to start using ClawCorp",
+      "cta": "Add Your First Provider"
+    },
+    "dialog": {
+      "title": "Add AI Provider",
+      "desc": "Configure a new AI model provider",
+      "displayName": "Display Name",
+      "apiKey": "API Key",
+      "apiKeyConfigured": "An API key is already stored for this provider.",
+      "apiKeyMissing": "No API key is stored for this provider yet.",
+      "apiKeyStored": "Your API key is stored locally on your machine.",
+      "replaceApiKey": "Replace API Key",
+      "replaceApiKeyHelp": "Leave this field empty if you want to keep the currently stored API key.",
+      "baseUrl": "Base URL",
+      "modelId": "Model ID",
+      "protocol": "Protocol",
+      "fallbackModels": "Fallback Models",
+      "fallbackProviders": "Fallback Providers",
+      "fallbackModelIds": "Fallback Model IDs",
+      "fallbackModelIdsPlaceholder": "gpt-4.1-mini\nanother-model-id",
+      "fallbackModelIdsHelp": "One model ID per line. These models use the current provider config before falling back to other providers.",
+      "noFallbackOptions": "Add another provider first to use it as a fallback target.",
+      "cancel": "Cancel",
+      "change": "Change provider",
+      "add": "Add Provider",
+      "save": "Save",
+      "customDoc": "Documentation",
+      "validate": "Validate"
+    },
+    "card": {
+      "default": "Default",
+      "configured": "Configured",
+      "noKey": "No API key set",
+      "none": "None",
+      "fallbacks_one": "Fallback: {{names}}",
+      "fallbacks_other": "Fallbacks ({{count}}): {{names}}",
+      "setDefault": "Set as default",
+      "editKey": "Edit API key",
+      "delete": "Delete provider"
+    },
+    "protocols": {
+      "openai": "OpenAI Compatible",
+      "openaiCompletions": "OpenAI Completions",
+      "openaiResponses": "OpenAI Responses",
+      "anthropic": "Anthropic Compatible"
+    },
+    "toast": {
+      "added": "Provider added successfully",
+      "failedAdd": "Failed to add provider",
+      "deleted": "Provider deleted",
+      "failedDelete": "Failed to delete provider",
+      "defaultUpdated": "Default provider updated",
+      "failedDefault": "Failed to set default",
+      "updated": "Provider updated",
+      "failedUpdate": "Failed to update provider",
+      "invalidKey": "Invalid API key",
+      "modelRequired": "Model ID is required",
+      "minimaxConflict": "Cannot add both MiniMax (Global) and MiniMax (CN) providers."
+    },
+    "oauth": {
+      "loginMode": "OAuth Login",
+      "apikeyMode": "API Key",
+      "loginPrompt": "This provider requires signing in via your browser.",
+      "loginButton": "Login with Browser",
+      "getApiKey": "Get API Key",
+      "waiting": "Waiting...",
+      "openLoginPage": "Open Login Page",
+      "waitingApproval": "Waiting for approval in browser...",
+      "cancel": "Cancel",
+      "codeCopied": "Code copied to clipboard",
+      "authFailed": "Authentication Failed",
+      "browserFlowUnavailable": "Browser OAuth is not wired for this provider yet.",
+      "tryAgain": "Try Again",
+      "approveLogin": "Approve Login",
+      "step1": "Copy the authorization code below.",
+      "step2": "Open the login page in your browser.",
+      "step3": "Paste the code to approve access.",
+      "requestingCode": "Requesting secure login code..."
+    }
+  },
+  "gateway": {
+    "title": "Gateway",
+    "description": "OpenClaw Gateway settings",
+    "status": "Status",
+    "port": "Port",
+    "logs": "Logs",
+    "appLogs": "Application Logs",
+    "openFolder": "Open Folder",
+    "autoStart": "Auto-start Gateway",
+    "autoStartDesc": "Start Gateway when ClawCorp launches",
+    "proxyTitle": "Proxy",
+    "proxyDesc": "Route Electron and Gateway traffic through your local proxy client.",
+    "proxyServer": "Proxy Server",
+    "proxyServerHelp": "The default proxy for all requests. Bare host:port values default to HTTP.",
+    "proxyHttpServer": "HTTP Proxy",
+    "proxyHttpServerHelp": "Advanced override for HTTP requests. Leave blank to use Proxy Server.",
+    "proxyHttpsServer": "HTTPS Proxy",
+    "proxyHttpsServerHelp": "Advanced override for HTTPS requests. Leave blank to use Proxy Server.",
+    "proxyAllServer": "ALL_PROXY / SOCKS",
+    "proxyAllServerHelp": "Advanced fallback for SOCKS-capable clients and protocols such as Telegram. Leave blank to use Proxy Server.",
+    "showAdvancedProxy": "Show advanced proxy fields",
+    "hideAdvancedProxy": "Hide advanced proxy fields",
+    "proxyBypass": "Bypass Rules",
+    "proxyBypassHelp": "Semicolon, comma, or newline separated hosts that should connect directly.",
+    "proxyRestartNote": "Saving reapplies Electron networking and restarts the Gateway immediately.",
+    "proxySaved": "Proxy settings saved",
+    "proxySaveFailed": "Failed to save proxy settings"
+  },
+  "updates": {
+    "title": "Updates",
+    "description": "Keep ClawCorp up to date",
+    "autoCheck": "Auto-check for updates",
+    "autoCheckDesc": "Check for updates on startup",
+    "autoDownload": "Auto-update",
+    "autoDownloadDesc": "Automatically download and install updates",
+    "status": {
+      "checking": "Checking for updates...",
+      "downloading": "Downloading update...",
+      "available": "Update available: v{{version}}",
+      "downloaded": "Ready to install: v{{version}}",
+      "autoInstalling": "Restarting to install update in {{seconds}}s...",
+      "failed": "Update check failed",
+      "latest": "You have the latest version",
+      "check": "Check for updates to get the latest features"
+    },
+    "action": {
+      "checking": "Checking...",
+      "downloading": "Downloading...",
+      "download": "Download Update",
+      "install": "Install & Restart",
+      "cancelAutoInstall": "Cancel",
+      "retry": "Retry",
+      "check": "Check for Updates"
+    },
+    "currentVersion": "Current Version",
+    "whatsNew": "What's New:",
+    "errorDetails": "Error Details:",
+    "help": "When auto-update is enabled, updates are downloaded and installed automatically."
+  },
+  "advanced": {
+    "title": "Advanced",
+    "description": "Power-user options",
+    "transport": {
+      "label": "Gateway Transport Preference",
+      "desc": "Choose how renderer requests gateway RPC: WebSocket, HTTP proxy, or IPC fallback.",
+      "saved": "Gateway transport preference saved",
+      "options": {
+        "wsFirst": "WS First",
+        "httpFirst": "HTTP First",
+        "wsOnly": "WS Only",
+        "httpOnly": "HTTP Only",
+        "ipcOnly": "IPC Only"
+      },
+      "descriptions": {
+        "wsFirst": "WS -> HTTP -> IPC",
+        "httpFirst": "HTTP -> WS -> IPC",
+        "wsOnly": "WS -> IPC",
+        "httpOnly": "HTTP -> IPC",
+        "ipcOnly": "IPC only"
+      }
+    },
+    "devMode": "Developer Mode",
+    "devModeDesc": "Show developer tools and shortcuts",
+    "telemetry": "Anonymous Usage Data",
+    "telemetryDesc": "Allow providing anonymous basic usage data to improve ClawCorp"
+  },
+  "developer": {
+    "title": "Developer",
+    "description": "Advanced options for developers",
+    "console": "OpenClaw Console",
+    "consoleDesc": "Access the native OpenClaw management interface",
+    "openConsole": "Open Developer Console",
+    "consoleNote": "Opens the Control UI with gateway token injected",
+    "gatewayToken": "Gateway Token",
+    "gatewayTokenDesc": "Paste this into Control UI settings if prompted",
+    "tokenUnavailable": "Token unavailable",
+    "tokenCopied": "Gateway token copied",
+    "cli": "OpenClaw CLI",
+    "cliDesc": "Copy a command to run OpenClaw without modifying PATH.",
+    "cliPowershell": "PowerShell command.",
+    "cmdUnavailable": "Command unavailable",
+    "cmdCopied": "CLI command copied",
+    "doctor": "OpenClaw Doctor",
+    "doctorDesc": "Run `openclaw doctor` and inspect the raw diagnostic output.",
+    "runDoctor": "Run Doctor",
+    "runDoctorFix": "Run Doctor Fix",
+    "doctorSucceeded": "OpenClaw doctor completed",
+    "doctorFailed": "OpenClaw doctor reported issues",
+    "doctorRunFailed": "Failed to run OpenClaw doctor",
+    "doctorFixSucceeded": "OpenClaw doctor fix completed",
+    "doctorFixFailed": "OpenClaw doctor fix reported issues",
+    "doctorFixRunFailed": "Failed to run OpenClaw doctor fix",
+    "doctorCopied": "Doctor output copied",
+    "doctorOk": "Healthy",
+    "doctorIssue": "Issues Found",
+    "doctorFixOk": "Fixed",
+    "doctorFixIssue": "Fix Failed",
+    "doctorExitCode": "Exit code",
+    "doctorDuration": "Duration",
+    "doctorCommand": "Command",
+    "doctorWorkingDir": "Working dir",
+    "doctorError": "Error",
+    "doctorStdout": "Stdout",
+    "doctorStderr": "Stderr",
+    "doctorOutputEmpty": "(empty)",
+    "wsDiagnostic": "WS Diagnostic Mode",
+    "wsDiagnosticDesc": "Temporarily enable WS/HTTP fallback chain for gateway RPC debugging.",
+    "wsDiagnosticEnabled": "WS diagnostic mode enabled",
+    "wsDiagnosticDisabled": "WS diagnostic mode disabled",
+    "telemetryViewer": "Telemetry Viewer",
+    "telemetryViewerDesc": "Local-only UX/performance telemetry, latest 200 entries.",
+    "telemetryAggregated": "Top Events",
+    "telemetryTotal": "Total",
+    "telemetryErrors": "Errors",
+    "telemetrySlow": "Slow (>=800ms)",
+    "telemetryEmpty": "No telemetry yet",
+    "telemetryCopied": "Telemetry copied",
+    "telemetryCleared": "Telemetry cleared",
+    "installCmd": "Install \"openclaw\" Command",
+    "installCmdDesc": "Installs ~/.local/bin/openclaw (no admin required)",
+    "installTitle": "Install OpenClaw Command",
+    "installMessage": "Install the \"openclaw\" command?",
+    "installDetail": "This will create ~/.local/bin/openclaw. Ensure ~/.local/bin is on your PATH if you want to run it globally."
+  },
+  "about": {
+    "title": "About",
+    "appName": "ClawCorp",
+    "tagline": "Graphical AI Assistant",
+    "basedOn": "Based on OpenClaw",
+    "version": "Version {{version}}",
+    "docs": "Website",
+    "github": "GitHub"
+  },
+  "skillsMcp": {
+    "overview": {
+      "title": "Split Skills and MCP views",
+      "description": "Use one tab for built-in skills and another for MCP services ClawCorp can call, including runtime, tool discovery, and logs.",
+      "tabsAriaLabel": "Skills and MCP view switcher"
+    },
+    "tabs": {
+      "skills": "Skills",
+      "mcp": "MCP"
+    },
+    "skillsCard": {
+      "title": "Installed Native Skills",
+      "refresh": "Refresh",
+      "gatewayWarning": "Gateway is disconnected. Connect the Gateway before managing skills.",
+      "loading": "Loading...",
+      "empty": "No installed skills yet",
+      "coreBadge": "Core",
+      "browseMarketplace": "Browse skill marketplace..."
+    },
+    "mcpCard": {
+      "title": "MCP Services and Runtime"
+    }
+  },
+  "settingsCenter": {
+    "groups": {
+      "quickConfig": "Quick Config",
+      "clone": "Clone",
+      "team": "Team",
+      "imChannel": "IM Channel",
+      "cronTasks": "Cron Tasks",
+      "files": "Files",
+      "agent": "Agent"
+    }
+  },
+  "settingsShell": {
+    "groups": {
+      "basic": "基础",
+      "workflow": "工作流",
+      "capability": "能力",
+      "governance": "治理"
+    },
+    "items": {
+      "costs-usage": {
+        "label": "Costs & Usage"
+      },
+      "models-providers": {
+        "label": "Models & Providers"
+      },
+      "general": {
+        "label": "General"
+      },
+      "skills-mcp": {
+        "label": "Skills & MCP"
+      },
+      "tool-permissions": {
+        "label": "Tool Permissions"
+      },
+      "memory-knowledge": {
+        "label": "Memory Knowledge Base"
+      },
+      "migration-backup": {
+        "label": "Migration & Backup"
+      },
+      "app-updates": {
+        "label": "App Updates"
+      },
+      "about": {
+        "label": "About"
+      },
+      "model-provider": {
+        "label": "模型与 Provider"
+      },
+      "team-role-strategy": {
+        "label": "团队与角色策略"
+      },
+      "channel-advanced": {
+        "label": "通道高级配置"
+      },
+      "automation-defaults": {
+        "label": "自动化默认策略"
+      },
+      "agent-avatars": {
+        "label": "分身头像"
+      },
+      "auto-update": {
+        "label": "应用更新"
+      },
+      "feedback-developer": {
+        "label": "反馈与开发者"
+      }
+    },
+    "meta": {
+      "costs-usage": {
+        "title": "Costs & Usage",
+        "subtitle": "Track spend, usage visibility, and budget controls from the canonical settings entry.",
+        "kicker": "Usage visibility"
+      },
+      "models-providers": {
+        "title": "Models & Providers",
+        "subtitle": "Configure provider access, default models, and gateway-backed model behavior.",
+        "kicker": "Providers and defaults"
+      },
+      "general": {
+        "title": "General",
+        "subtitle": "Manage appearance, language, identity, avatars, and default workspace behavior in one place.",
+        "kicker": "Preferences and defaults"
+      },
+      "memory-knowledge": {
+        "title": "Memory Knowledge Base",
+        "subtitle": "Manage long-term memory storage, summarization rules, and mounted local knowledge directories.",
+        "kicker": "Shared memory system"
+      },
+      "skills-mcp": {
+        "title": "Skills & MCP Services",
+        "subtitle": "Manage internal executors (Skills) and external protocol services (MCP servers).",
+        "kicker": "Capability modules"
+      },
+      "tool-permissions": {
+        "title": "Tool Permissions",
+        "subtitle": "Strictly define which tools and folders intelligent systems are allowed to modify.",
+        "kicker": "Capability sandbox and blocklists"
+      },
+      "migration-backup": {
+        "title": "Migration & Backup",
+        "subtitle": "Protect configuration from loss or damage and support moving between primary and secondary machines.",
+        "kicker": "Sync, rollback, and migration"
+      },
+      "app-updates": {
+        "title": "App Updates",
+        "subtitle": "Manage automatic checks and downloads, and review current version and update progress.",
+        "kicker": "Versioning and updates"
+      },
+      "about": {
+        "title": "About",
+        "subtitle": "Review product information, support links, and developer diagnostics without promoting them to top-level navigation.",
+        "kicker": "Product and diagnostics"
+      },
+      "model-provider": {
+        "title": "模型与服务商",
+        "subtitle": "配置核心推理引擎，绑定第三方 API Key，并指定全局兜底模型。",
+        "kicker": "API Key 配置、大语言模型选择"
+      },
+      "team-role-strategy": {
+        "title": "团队架构",
+        "subtitle": "管理如何自动派生系统子 AI，并给不同类任务指定默认角色处理。",
+        "kicker": "角色分配、上下文共享边界"
+      },
+      "channel-advanced": {
+        "title": "通道高级配置",
+        "subtitle": "管理飞书、企业微信、Telegram 等多宿主环境的收发言策略。",
+        "kicker": "IM 集成、静默规则、消息路由"
+      },
+      "automation-defaults": {
+        "title": "自动化默认策略",
+        "subtitle": "定义 Cron 等无人值守工作流的并发资源池和异常熔断逻辑。",
+        "kicker": "定时调度限制、错误重试与告警"
+      },
+      "agent-avatars": {
+        "title": "分身头像",
+        "subtitle": "为每个 Agent 分身上传自定义头像图片。",
+        "kicker": "头像管理"
+      },
+      "auto-update": {
+        "title": "应用更新",
+        "subtitle": "管理自动检查与下载更新策略，查看当前版本与更新进度。",
+        "kicker": "版本管理、自动更新"
+      },
+      "feedback-developer": {
+        "title": "反馈与开发者",
+        "subtitle": "继续承载更新、Doctor 诊断和开发者模式等真实功能。",
+        "kicker": "治理"
+      }
+    }
+  },
+  "memoryKnowledge": {
+    "tabsAriaLabel": "Memory knowledge tabs",
+    "tabs": {
+      "strategy": "Strategy Settings",
+      "browser": "Data Browser"
+    }
+  },
+  "memoryStrategy": {
+    "global": {
+      "title": "Global Long-Term Memory Strategy",
+      "storageLabel": "Storage Backend",
+      "storageOptions": {
+        "sqlite": "Local SQLite + BM25 full-text search (default lightweight option)",
+        "postgres": "PostgreSQL + pgvector (cloud native)",
+        "chroma": "Chroma (vector-first)"
+      },
+      "embeddingLabel": "Embedding Size & Model",
+      "embeddingOptions": {
+        "small": "text-embedding-3-small (OpenAI, cost effective)",
+        "large": "text-embedding-3-large (OpenAI, high accuracy)",
+        "local": "nomic-embed-text (local, free)"
+      }
+    },
+    "automation": {
+      "title": "Automatic Consolidation & Summaries",
+      "contextConsolidation": {
+        "title": "Automatic rolling compression for multi-turn conversations (Context Consolidation)",
+        "description": "When active context exceeds 16k tokens, extract core knowledge into long-term memory and trim the frontend context."
+      },
+      "nightlyReflection": {
+        "title": "Nightly Reflection",
+        "description": "During very low overnight load, merge and summarize yesterday's IM interactions into the global profile."
+      }
+    },
+    "localKnowledge": {
+      "title": "Mount Local Knowledge Directories",
+      "examplePath": "D:/CompanyDocs/Handbook",
+      "exampleStats": "143 PDFs, 42 MDs",
+      "reindex": "Reindex",
+      "addDirectory": "+ Add local watch directory set"
+    }
+  },
+  "memoryBrowser": {
+    "fileListAria": "Memory file list",
+    "previewAria": "Memory preview",
+    "filesLabel": "Files ({{count}})",
+    "refreshAria": "Refresh memory file list",
+    "empty": "No memory files yet",
+    "selectFile": "Select a file on the left to view its content",
+    "loading": "Loading...",
+    "saved": "Saved",
+    "readFailed": "Read failed: {{error}}",
+    "saveFailed": "Save failed: {{error}}",
+    "saveFailedPrefix": "Save failed",
+    "actions": {
+      "edit": "Edit",
+      "cancel": "Cancel",
+      "save": "Save",
+      "saving": "Saving..."
+    },
+    "time": {
+      "justNow": "just now",
+      "minutesAgo_one": "{{count}} minute ago",
+      "minutesAgo_other": "{{count}} minutes ago",
+      "hoursAgo_one": "{{count}} hour ago",
+      "hoursAgo_other": "{{count}} hours ago",
+      "daysAgo_one": "{{count}} day ago",
+      "daysAgo_other": "{{count}} days ago"
+    }
+  },
+  "migrationPanel": {
+    "migrate": {
+      "title": "Migrate from OpenClaw",
+      "description": "Automatically detect legacy OpenClaw workspaces on disk and migrate agents, skills, and IM channels without loss.",
+      "cta": "🪄 Launch Migration Wizard"
+    },
+    "backup": {
+      "title": "Cold Backup & Export",
+      "snapshotTitle": "Back up a full snapshot package",
+      "snapshotDescription": "Bundle settings, encrypted credentials, cron config, and knowledge graph data into a single .clawcorp archive.",
+      "importTitle": "Migrate from snapshot / overwrite import",
+      "importDescription": "Useful when moving to a new computer. Selecting a file will require restarting the app. Unsaved data will be lost.",
+      "importButton": "Choose .clawcorp Import"
+    },
+    "autoBackup": {
+      "title": "Automatic Incremental Backup",
+      "itemTitle": "Keep a local config history every day (Git-like)",
+      "itemDescription": "This allows one-click rollback after a bad MCP JSON change. Up to 5 history entries are kept."
+    },
+    "hardReset": {
+      "title": "Hard Reset",
+      "warning": "Clear all settings and related agent data... (this action cannot be undone)",
+      "button": "Clear and Restart"
+    }
+  },
+  "migrationWizard": {
+    "dialogAriaLabel": "Configuration migration wizard",
+    "header": {
+      "title": "Configuration Migration",
+      "subtitle": "Migrate settings from OpenClaw to ClawCorp"
+    },
+    "actions": {
+      "close": "Close migration wizard",
+      "previous": "‹ Previous",
+      "skip": "Skip",
+      "next": "› Next",
+      "start": "🚀 Start Migration"
+    },
+    "compatibility": {
+      "title": "Migration Compatibility Report",
+      "items": {
+        "channels": {
+          "label": "Channels (IM Config)",
+          "description": "Extract channel config from openclaw.json"
+        },
+        "agentDefaults": {
+          "label": "Agent Default Config",
+          "description": "Migrate agents.defaults settings"
+        },
+        "workspace": {
+          "label": "Workspace Files (workspace/)",
+          "description": "Copy files from workspace/ (39 KB)"
+        },
+        "agents": {
+          "label": "Agent Config (agents/)",
+          "description": "Copy config under agents/ (16 KB)"
+        },
+        "skills": {
+          "label": "Skill Config (skills/)",
+          "description": "Copy the skills/ directory (review custom scripts first)"
+        },
+        "cron": {
+          "label": "Cron Tasks (cron/)",
+          "description": "Copy cron task configuration"
+        },
+        "identity": {
+          "label": "Identity Info (IDENTITY.md)",
+          "description": "Copy the IDENTITY.md file"
+        },
+        "memory": {
+          "label": "Agent Memory Library",
+          "description": "Memory library does not exist"
+        },
+        "history": {
+          "label": "Conversation History (0 sessions)",
+          "description": "No conversation history found"
+        },
+        "providers": {
+          "label": "Model Provider Config",
+          "description": "No custom model providers are available to migrate (zai/zhi…)"
+        },
+        "browser": {
+          "label": "Browser State",
+          "description": "Browser data does not exist"
+        },
+        "media": {
+          "label": "Media Files",
+          "description": "Media files do not exist"
+        },
+        "plugins": {
+          "label": "Plugins (plugins/)",
+          "description": "ClawCorp uses a different plugin architecture and cannot migrate them directly"
+        },
+        "gateway": {
+          "label": "Gateway Config",
+          "description": "Gateway architecture differs and cannot be migrated directly"
+        }
+      }
+    },
+    "scope": {
+      "title": "Choose Migration Scope",
+      "subtitle": "Select the configuration items to migrate",
+      "selectAll": "Select all",
+      "clearAll": "Clear all",
+      "counter": "{{selected}}/{{total}}"
+    },
+    "confirm": {
+      "title": "Confirm Migration",
+      "checklist": {
+        "copyOnly": "Original config is not deleted (copy, not move)",
+        "keepDefaults": "Conflicts keep ClawCorp defaults",
+        "backupPath": "Back up to ~/.openclaw.backup/"
+      },
+      "securityNotice": "Security notice: skills/ may contain custom scripts, review them before migrating",
+      "acknowledge": "I understand the migration risks and want to continue"
+    }
+  },
+  "maintenance": {
+    "title": "Maintenance",
+    "rerunSetup": "Re-run Setup",
+    "resetAllSettings": "Reset All Settings",
+    "clearServerData": "Clear Server Data",
+    "runChecks": "Run checks",
+    "resetSuccess": "Settings reset to defaults",
+    "resetFailed": "Failed to reset settings: {{error}}",
+    "clearSuccess": "Server data cleared",
+    "clearFailed": "Failed to clear server data: {{error}}"
+  },
+  "backToWorkbench": "Back to Workbench",
+  "agentAvatars": "Agent Avatars",
+  "agentAvatarsLoading": "Loading...",
+  "agentAvatarsEmpty": "No agents found.",
+  "uploadAvatar": "Upload Avatar",
+  "removeAvatar": "Remove Avatar",
+  "avatarUpdated": "Avatar updated",
+  "avatarRemoved": "Avatar removed",
+  "avatarImageRequired": "Please select an image file.",
+  "avatarUploadFailed": "Failed to update avatar.",
+  "avatarReadFailed": "Unable to read image file.",
+  "avatarRemoveFailed": "Failed to remove avatar.",
+  "brandImageRequired": "Please select an image file for the brand asset.",
+  "brandReadFailed": "Unable to read brand asset."
+}

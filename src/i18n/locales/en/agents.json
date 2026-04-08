@@ -1,0 +1,131 @@
+{
+    "title": "Agents",
+    "subtitle": "When adding a new Agent, ClawCorp will copy the main Agent's workspace files and runtime auth setup. The configuration can be modified through a dialog.",
+    "refresh": "Refresh",
+    "addAgent": "Add Agent",
+    "gatewayWarning": "Gateway service is not running. Agent/channel changes may take a moment to apply.",
+    "defaultBadge": "default",
+    "inherited": "inherited",
+    "none": "none",
+    "modelLine": "Model: {{model}}{{suffix}}",
+    "channelsLine": "Channels: {{channels}}",
+    "deleteAgent": "Delete Agent",
+    "settings": "Settings",
+    "creating": "Creating...",
+    "createDialog": {
+        "title": "Add Agent",
+        "description": "Create a new agent by name. ClawCorp will copy the main agent's workspace bootstrap files and runtime auth setup.",
+        "nameLabel": "Agent Name",
+        "namePlaceholder": "Coding Helper"
+    },
+    "deleteDialog": {
+        "title": "Delete Agent",
+        "message": "Delete \"{{name}}\" from ClawCorp? This permanently deletes the agent and its ClawCorp-managed workspace, runtime, and session files from disk."
+    },
+    "settingsDialog": {
+        "title": "{{name}} Settings",
+        "description": "Update the agent name and manage which channels belong to this agent.",
+        "nameLabel": "Agent Name",
+        "agentIdLabel": "Agent ID",
+        "modelLabel": "Model",
+        "channelsTitle": "Channels",
+        "channelsDescription": "Each channel type has a single ClawCorp configuration. Saving a configured channel here moves ownership to this agent.",
+        "addChannel": "Add Channel",
+        "noChannels": "No channels are assigned to this agent yet."
+    },
+    "square": {
+        "title": "Employee Square",
+        "subtitle": "Browse, create, and route into every agent from one square.",
+        "stats": {
+            "all": "All Agents",
+            "leaders": "Leaders",
+            "workers": "Workers"
+        },
+        "filters": {
+            "all": "All",
+            "leader": "Leaders",
+            "worker": "Workers",
+            "direct": "Direct Chat",
+            "leader_only": "Leader Only",
+            "with_team": "With Team"
+        },
+        "actions": {
+            "chat": "Chat",
+            "memory": "Memory",
+            "details": "Details"
+        },
+        "empty": {
+            "title": "No matching agents",
+            "description": "Adjust the current filters or create a new agent."
+        }
+    },
+    "detail": {
+        "title": "Agent Detail",
+        "linkLabel": "Details",
+        "backToAgents": "Back to agents",
+        "notFoundTitle": "Agent not found",
+        "notFoundDescription": "The requested agent does not exist in the current ClawCorp snapshot.",
+        "loading": "Loading agent details...",
+        "kicker": "Agent detail",
+        "noPersona": "No persona configured.",
+        "metadata": "Metadata",
+        "agentId": "Agent ID",
+        "model": "Model",
+        "workspace": "Workspace",
+        "agentDir": "Agent directory",
+        "mainSessionKey": "Main session key",
+        "hierarchy": "Hierarchy",
+        "rootSummary": "This is the root ClawCorp agent.",
+        "reportsToSummary": "{{name}} reports to {{parent}}",
+        "reportsTo": "Reports to",
+        "directReports": "Direct reports",
+        "teamSettings": "Team settings",
+        "teamSettingsDescription": "Define whether this agent leads the team, can be directly contacted, and what work it is responsible for.",
+        "teamRole": "Team role",
+        "teamRoleLeader": "leader",
+        "teamRoleWorker": "worker",
+        "teamRoleLeaderHint": "Leaders act as the main user-facing coordinator for a team.",
+        "teamRoleWorkerHint": "Workers focus on execution and can be routed through a leader.",
+        "chatAccess": "Chat access",
+        "chatAccessDirect": "direct",
+        "chatAccessLeaderOnly": "leader_only",
+        "chatAccessDirectHint": "Users can open a conversation with this agent directly.",
+        "chatAccessLeaderOnlyHint": "This agent is blocked from normal direct chat and should be contacted through its leader.",
+        "responsibility": "Responsibility",
+        "responsibilityPlaceholder": "Describe this member’s primary responsibility",
+        "saveTeamSettings": "Save team settings",
+        "savingTeamSettings": "Saving...",
+        "channels": "Channels",
+        "noChannels": "No channels assigned.",
+        "none": "none",
+        "avatar": "Avatar",
+        "uploadAvatar": "Upload Avatar",
+        "removeAvatar": "Remove Avatar",
+        "avatarUploaded": "Avatar updated",
+        "avatarUploadFailed": "Failed to upload avatar",
+        "avatarRemoved": "Avatar removed",
+        "avatarRemoveFailed": "Failed to remove avatar",
+        "cronJobs": "Cron Jobs",
+        "cronLoading": "Loading cron jobs...",
+        "noCronJobs": "No cron jobs associated with this agent.",
+        "cronEnabled": "enabled",
+        "cronDisabled": "disabled",
+        "cronLastRun": "Last run"
+    },
+    "removeChannelDialog": {
+        "title": "Remove Channel",
+        "message": "Remove {{name}} from ClawCorp? This deletes the current channel configuration."
+    },
+    "toast": {
+        "agentCreated": "Agent created",
+        "agentCreateFailed": "Failed to create agent: {{error}}",
+        "agentDeleted": "Agent deleted",
+        "agentDeleteFailed": "Failed to delete agent: {{error}}",
+        "agentUpdated": "Agent updated",
+        "agentUpdateFailed": "Failed to update agent: {{error}}",
+        "channelAssigned": "{{channel}} assigned to agent",
+        "channelAssignFailed": "Failed to assign channel: {{error}}",
+        "channelRemoved": "{{channel}} removed",
+        "channelRemoveFailed": "Failed to remove channel: {{error}}"
+    }
+}

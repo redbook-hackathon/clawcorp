@@ -1,0 +1,233 @@
+{
+    "title": "Scheduled Tasks",
+    "subtitle": "Automate AI workflows with scheduled tasks",
+    "newTask": "New Task",
+    "refresh": "Refresh",
+    "gatewayWarning": "Gateway is not running. Scheduled tasks cannot be managed without an active Gateway.",
+    "stats": {
+        "total": "Total Tasks",
+        "active": "Active",
+        "paused": "Paused",
+        "failed": "Failed"
+    },
+    "empty": {
+        "title": "No scheduled tasks",
+        "description": "Create scheduled tasks to automate AI workflows. Tasks can send messages, run queries, or perform actions at specified times.",
+        "create": "Create Your First Task"
+    },
+    "card": {
+        "runNow": "Run Now",
+        "deleteConfirm": "Are you sure you want to delete this task?",
+        "last": "Last",
+        "next": "Next"
+    },
+    "dialog": {
+        "createTitle": "Create Task",
+        "editTitle": "Edit Task",
+        "cancel": "Cancel",
+        "description": "Schedule an automated AI task",
+        "pipelineWizardLabel": "Pipeline Wizard",
+        "pipelineSummary": "Trigger → Agent → Delivery → Failure Alert",
+        "taskName": "Task Name",
+        "taskNamePlaceholder": "e.g., Morning briefing",
+        "message": "Message / Prompt",
+        "messagePlaceholder": "What should the AI do? e.g., Give me a summary of today's news and weather",
+        "schedule": "Schedule",
+        "cronPlaceholder": "Cron expression (e.g., 0 9 * * *)",
+        "cronHelp": "Standard 5-part cron expression, e.g. <code>0 7 * * *</code> = every day at 07:00",
+        "deliveryMode": "Delivery mode",
+        "deliveryModeAria": "Delivery mode",
+        "deliveryChannel": "Delivery channel",
+        "deliveryTarget": "Delivery target",
+        "failureAlertAfter": "Failure alert after",
+        "failureAlertCooldown": "Failure alert cooldown",
+        "failureAlertChannel": "Failure alert channel",
+        "bestEffort": "Best effort delivery",
+        "bestEffortAria": "Best effort delivery",
+        "creating": "Creating...",
+        "confirmCreate": "Confirm Create",
+        "usePresets": "Use presets",
+        "useCustomCron": "Use custom cron",
+        "targetChannel": "Target Channel",
+        "noChannels": "No channels available. Add a channel first.",
+        "discordChannelId": "Discord Channel ID",
+        "discordChannelIdPlaceholder": "e.g., 1438452657525100686",
+        "discordChannelIdDesc": "Right-click the Discord channel → Copy Channel ID",
+        "enableImmediately": "Enable immediately",
+        "enableImmediatelyDesc": "Start running this task after creation",
+        "saveChanges": "Save Changes",
+        "savingChanges": "Saving...",
+        "deliveryModes": {
+            "none": "none",
+            "announce": "announce"
+        }
+    },
+    "presets": {
+        "everyMinute": "Every minute",
+        "every5Min": "Every 5 minutes",
+        "every15Min": "Every 15 minutes",
+        "everyHour": "Every hour",
+        "daily9am": "Daily at 9am",
+        "daily6pm": "Daily at 6pm",
+        "weeklyMon": "Weekly (Mon 9am)",
+        "monthly1st": "Monthly (1st at 9am)"
+    },
+    "toast": {
+        "created": "Task created",
+        "updated": "Task updated",
+        "enabled": "Task enabled",
+        "paused": "Task paused",
+        "deleted": "Task deleted",
+        "triggered": "Task triggered successfully",
+        "failedTrigger": "Failed to trigger task: {{error}}",
+        "failedUpdate": "Failed to update task",
+        "failedDelete": "Failed to delete task",
+        "nameRequired": "Please enter a task name",
+        "messageRequired": "Please enter a message",
+        "channelRequired": "Please select a channel",
+        "discordIdRequired": "Please enter a Discord Channel ID",
+        "scheduleRequired": "Please select or enter a schedule"
+    },
+    "schedule": {
+        "everySeconds": "Every {{count}}s",
+        "everyMinutes": "Every {{count}} minutes",
+        "everyHours": "Every {{count}} hours",
+        "everyDays": "Every {{count}} days",
+        "onceAt": "Once at {{time}}",
+        "weeklyAt": "Weekly on {{day}} at {{time}}",
+        "monthlyAtDay": "Monthly on day {{day}} at {{time}}",
+        "dailyAt": "Daily at {{time}}",
+        "unknown": "Unknown"
+    },
+    "header": {
+        "title": "Scheduled tasks",
+        "subtitle": "Automate AI workflows with scheduled tasks",
+        "summary": "{{total}} tasks · {{enabled}} enabled",
+        "lastUpdated": "Last refreshed: {{time}}",
+        "loading": "Loading tasks...",
+        "error": "Failed to load tasks"
+    },
+    "actions": {
+        "refresh": "Refresh",
+        "newTask": "New task"
+    },
+    "tabs": {
+        "overview": "Overview",
+        "schedule": "Schedule",
+        "pipelines": "Pipelines"
+    },
+    "filters": {
+        "all": "All tasks",
+        "failed": "Failed",
+        "enabled": "Enabled"
+    },
+    "status": {
+        "deliveryIssue": "A config or delivery error was detected. Please review delivery settings."
+    },
+    "overview": {
+        "empty": {
+            "title": "No tasks yet",
+            "filteredTitle": "No tasks match the current filter",
+            "description": "Create a task to see it here."
+        },
+        "badges": {
+            "success": "Last success",
+            "failed": "Last failed"
+        },
+        "labels": {
+            "delivery": "Delivery:",
+            "sessionTarget": "Session target:",
+            "alertAfter": "Alert after {{count}} failures",
+            "chatOnly": "Chat only",
+            "sessionTargetDefault": "default"
+        },
+        "timestamps": {
+            "next": "Next",
+            "last": "Last"
+        },
+        "actions": {
+            "run": "Run now",
+            "edit": "Edit",
+            "pause": "Pause",
+            "resume": "Resume",
+            "delete": "Delete"
+        }
+    },
+    "scheduleDetails": {
+        "weekdays": {
+            "mon": "Mon",
+            "tue": "Tue",
+            "wed": "Wed",
+            "thu": "Thu",
+            "fri": "Fri",
+            "sat": "Sat",
+            "sun": "Sun"
+        },
+        "empty": {
+            "title": "No scheduled tasks",
+            "description": "Create a task and we will show it in the weekly view.",
+            "hint": "Tasks can send messages, run checks, or notify other teams."
+        },
+        "upcoming": {
+            "title": "Upcoming runs",
+            "emptyTitle": "No upcoming runs",
+            "emptyDesc": "Scheduled tasks will appear here once they have a next run."
+        }
+    },
+    "pipelines": {
+        "stats": {
+            "total": "Total tasks",
+            "ran": "Ran",
+            "success": "Success",
+            "failed": "Failed",
+            "successRate": "Success rate"
+        },
+        "empty": {
+            "title": "No run records yet",
+            "description": "Trigger a task and we will log its execution.",
+            "hint": "Once a task runs, you can inspect the history here."
+        },
+        "table": {
+            "task": "Task",
+            "schedule": "Schedule",
+            "lastRun": "Last run",
+            "duration": "Duration",
+            "status": "Status",
+            "model": "Model",
+            "summary": "Summary",
+            "actions": "Actions"
+        },
+        "labels": {
+            "triggerHint": "Trigger → Agent → Delivery",
+            "alertAfter": "Alert after {{count}} failures"
+        },
+        "details": {
+            "title": "Run details",
+            "close": "Close",
+            "loading": "Loading run history...",
+            "noRecords": "No run history yet",
+            "summarySuccess": "Execution complete",
+            "summaryFailed": "Execution failed",
+            "labels": {
+                "delivery": "Delivery:",
+                "sessionTarget": "Session target:",
+                "schedule": "Schedule:",
+                "nextRun": "Next run:",
+                "neverRan": "Never ran"
+            },
+            "status": {
+                "success": "Success",
+                "failed": "Failed"
+            }
+        },
+        "buttons": {
+            "run": "Run",
+            "details": "Details",
+            "collapse": "Close"
+        }
+    },
+    "common": {
+        "loading": "Loading...",
+        "unknown": "—"
+    }
+}

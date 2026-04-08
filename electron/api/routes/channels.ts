@@ -44,6 +44,7 @@ import {
   listChannelOwnerBindings,
   upsertChannelOwnerBinding,
 } from '../../utils/channel-owner-binding';
+import { listTeamsSnapshot } from '../../utils/team-config';
 import {
   listDiscordDirectoryGroupsFromConfig,
   listDiscordDirectoryPeersFromConfig,
@@ -2305,8 +2306,19 @@ export async function handleChannelRoutes(
         return true;
       }
 
-      if (agentId) {
-        await assignChannelAccountToAgent(agentId, storedChannelType, accountId);
+      let resolvedAgentId: string | undefined = agentId;
+      if (!resolvedAgentId && teamId) {
+        const teams = await listTeamsSnapshot();
+        const team = teams.find((entry) => entry.id === teamId);
+        if (!team) {
+          sendJson(res, 404, { success: false, error: 'Team not found' });
+          return true;
+        }
+        resolvedAgentId = team.leaderId;
+      }
+
+      if (resolvedAgentId) {
+        await assignChannelAccountToAgent(resolvedAgentId, storedChannelType, accountId);
       } else {
         await clearChannelBinding(storedChannelType, accountId);
       }
@@ -2314,7 +2326,7 @@ export async function handleChannelRoutes(
       await upsertChannelOwnerBinding({
         channelType: storedChannelType,
         accountId,
-        ...(agentId ? { agentId } : {}),
+        ...(resolvedAgentId ? { agentId: resolvedAgentId } : {}),
         ...(teamId ? { teamId } : {}),
         ...(responsiblePerson ? { responsiblePerson } : {}),
       });

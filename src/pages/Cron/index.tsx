@@ -8,6 +8,7 @@ import { cn } from '@/lib/utils';
 import { useCronStore } from '@/stores/cron';
 import type { CronJob } from '@/types/cron';
 
+
 /* ─── Helpers ─── */
 
 function formatSchedule(schedule: CronJob['schedule'], t: (key: string, options?: Record<string, unknown>) => string): string {
@@ -353,106 +354,106 @@ export function Cron() {
       </div>
 
       {/* Create modal */}
-        {createOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30">
-            <div className="w-[400px] rounded-2xl bg-white p-6 shadow-xl">
-              <h2 className="mb-4 text-[16px] font-semibold text-[#000000]">{editingJob ? t('dialog.editTitle') : t('dialog.createTitle')}</h2>
-              <div className="mb-4 rounded-xl border border-black/[0.06] bg-[#f8fafc] px-4 py-3">
-                <p className="text-[12px] font-medium text-[#6b7280]">{t('dialog.pipelineWizardLabel')}</p>
-                <p className="mt-1 text-[13px] text-[#334155]">{t('dialog.pipelineSummary')}</p>
-              </div>
-              <div className="mb-3">
-                <p className="mb-1.5 text-[13px] font-medium text-[#000000]">{t('dialog.taskName')}</p>
-                <input value={createName} onChange={(e) => setCreateName(e.target.value)} placeholder={t('dialog.taskNamePlaceholder')} className="w-full rounded-lg border border-black/10 px-3 py-2 text-[13px] outline-none focus:border-clawx-ac" />
-              </div>
-              <div className="mb-3">
-                <p className="mb-1.5 text-[13px] font-medium text-[#000000]">{t('dialog.message')}</p>
-                <textarea value={createMessage} onChange={(e) => setCreateMessage(e.target.value)} placeholder={t('dialog.messagePlaceholder')} rows={3} className="w-full resize-none rounded-lg border border-black/10 px-3 py-2 text-[13px] outline-none focus:border-clawx-ac" />
-              </div>
-              <div className="mb-5">
-                <p className="mb-1.5 text-[13px] font-medium text-[#000000]">{t('dialog.schedule')}</p>
-                <input value={createSchedule} onChange={(e) => setCreateSchedule(e.target.value)} placeholder="0 7 * * *" className="w-full rounded-lg border border-black/10 px-3 py-2 font-mono text-[13px] outline-none focus:border-clawx-ac" />
-                <p className="mt-1 text-[11px] text-[#8e8e93]">{t('dialog.cronHelp')}</p>
-              </div>
-              <div className="mb-3 grid grid-cols-2 gap-3">
-                <label className="block">
-                  <p className="mb-1.5 text-[13px] font-medium text-[#000000]">{t('dialog.deliveryMode')}</p>
-                  <select
-                    aria-label={t('dialog.deliveryModeAria')}
-                    value={createDeliveryMode}
-                    onChange={(e) => setCreateDeliveryMode(e.target.value)}
-                    className="w-full rounded-lg border border-black/10 px-3 py-2 text-[13px] outline-none focus:border-clawx-ac"
-                  >
-                    <option value="none">{t('dialog.deliveryModes.none')}</option>
-                    <option value="announce">{t('dialog.deliveryModes.announce')}</option>
-                  </select>
-                </label>
-                <label className="block">
-                  <p className="mb-1.5 text-[13px] font-medium text-[#000000]">{t('dialog.deliveryChannel')}</p>
-                  <input
-                    value={createDeliveryChannel}
-                    onChange={(e) => setCreateDeliveryChannel(e.target.value)}
+      {createOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30">
+          <div className="w-[400px] rounded-2xl bg-white p-6 shadow-xl">
+            <h2 className="mb-4 text-[16px] font-semibold text-[#000000]">{editingJob ? t('dialog.editTitle') : t('dialog.createTitle')}</h2>
+            <div className="mb-4 rounded-xl border border-black/[0.06] bg-[#f8fafc] px-4 py-3">
+              <p className="text-[12px] font-medium text-[#6b7280]">{t('dialog.pipelineWizardLabel')}</p>
+              <p className="mt-1 text-[13px] text-[#334155]">{t('dialog.pipelineSummary')}</p>
+            </div>
+            <div className="mb-3">
+              <p className="mb-1.5 text-[13px] font-medium text-[#000000]">{t('dialog.taskName')}</p>
+              <input value={createName} onChange={(e) => setCreateName(e.target.value)} placeholder={t('dialog.taskNamePlaceholder')} className="w-full rounded-lg border border-black/10 px-3 py-2 text-[13px] outline-none focus:border-clawx-ac" />
+            </div>
+            <div className="mb-3">
+              <p className="mb-1.5 text-[13px] font-medium text-[#000000]">{t('dialog.message')}</p>
+              <textarea value={createMessage} onChange={(e) => setCreateMessage(e.target.value)} placeholder={t('dialog.messagePlaceholder')} rows={3} className="w-full resize-none rounded-lg border border-black/10 px-3 py-2 text-[13px] outline-none focus:border-clawx-ac" />
+            </div>
+            <div className="mb-5">
+              <p className="mb-1.5 text-[13px] font-medium text-[#000000]">{t('dialog.schedule')}</p>
+              <input value={createSchedule} onChange={(e) => setCreateSchedule(e.target.value)} placeholder="0 7 * * *" className="w-full rounded-lg border border-black/10 px-3 py-2 font-mono text-[13px] outline-none focus:border-clawx-ac" />
+              <p className="mt-1 text-[11px] text-[#8e8e93]">{t('dialog.cronHelp')}</p>
+            </div>
+            <div className="mb-3 grid grid-cols-2 gap-3">
+              <label className="block">
+                <p className="mb-1.5 text-[13px] font-medium text-[#000000]">{t('dialog.deliveryMode')}</p>
+                <select
+                  aria-label={t('dialog.deliveryModeAria')}
+                  value={createDeliveryMode}
+                  onChange={(e) => setCreateDeliveryMode(e.target.value)}
+                  className="w-full rounded-lg border border-black/10 px-3 py-2 text-[13px] outline-none focus:border-clawx-ac"
+                >
+                  <option value="none">{t('dialog.deliveryModes.none')}</option>
+                  <option value="announce">{t('dialog.deliveryModes.announce')}</option>
+                </select>
+              </label>
+              <label className="block">
+                <p className="mb-1.5 text-[13px] font-medium text-[#000000]">{t('dialog.deliveryChannel')}</p>
+                <input
+                  value={createDeliveryChannel}
+                  onChange={(e) => setCreateDeliveryChannel(e.target.value)}
                   placeholder="feishu"
                   className="w-full rounded-lg border border-black/10 px-3 py-2 text-[13px] outline-none focus:border-clawx-ac"
                 />
               </label>
-              </div>
-              <div className="mb-3 grid grid-cols-2 gap-3">
-                <label className="block">
-                  <p className="mb-1.5 text-[13px] font-medium text-[#000000]">{t('dialog.deliveryTarget')}</p>
-                  <input
-                    value={createDeliveryTo}
-                    onChange={(e) => setCreateDeliveryTo(e.target.value)}
+            </div>
+            <div className="mb-3 grid grid-cols-2 gap-3">
+              <label className="block">
+                <p className="mb-1.5 text-[13px] font-medium text-[#000000]">{t('dialog.deliveryTarget')}</p>
+                <input
+                  value={createDeliveryTo}
+                  onChange={(e) => setCreateDeliveryTo(e.target.value)}
                   placeholder="release-room"
                   className="w-full rounded-lg border border-black/10 px-3 py-2 text-[13px] outline-none focus:border-clawx-ac"
                 />
-                </label>
-                <label className="block">
-                  <p className="mb-1.5 text-[13px] font-medium text-[#000000]">{t('dialog.failureAlertAfter')}</p>
-                  <input
-                    value={createFailureAlertAfter}
-                    onChange={(e) => setCreateFailureAlertAfter(e.target.value)}
+              </label>
+              <label className="block">
+                <p className="mb-1.5 text-[13px] font-medium text-[#000000]">{t('dialog.failureAlertAfter')}</p>
+                <input
+                  value={createFailureAlertAfter}
+                  onChange={(e) => setCreateFailureAlertAfter(e.target.value)}
                   placeholder="3"
                   className="w-full rounded-lg border border-black/10 px-3 py-2 text-[13px] outline-none focus:border-clawx-ac"
                 />
               </label>
-              </div>
-              <div className="mb-5 grid grid-cols-2 gap-3">
-                <label className="block">
-                  <p className="mb-1.5 text-[13px] font-medium text-[#000000]">{t('dialog.failureAlertCooldown')}</p>
-                  <input
-                    value={createFailureAlertCooldownSeconds}
-                    onChange={(e) => setCreateFailureAlertCooldownSeconds(e.target.value)}
+            </div>
+            <div className="mb-5 grid grid-cols-2 gap-3">
+              <label className="block">
+                <p className="mb-1.5 text-[13px] font-medium text-[#000000]">{t('dialog.failureAlertCooldown')}</p>
+                <input
+                  value={createFailureAlertCooldownSeconds}
+                  onChange={(e) => setCreateFailureAlertCooldownSeconds(e.target.value)}
                   placeholder="600"
                   className="w-full rounded-lg border border-black/10 px-3 py-2 text-[13px] outline-none focus:border-clawx-ac"
                 />
-                </label>
-                <label className="block">
-                  <p className="mb-1.5 text-[13px] font-medium text-[#000000]">{t('dialog.failureAlertChannel')}</p>
-                  <input
-                    value={createFailureAlertChannel}
-                    onChange={(e) => setCreateFailureAlertChannel(e.target.value)}
+              </label>
+              <label className="block">
+                <p className="mb-1.5 text-[13px] font-medium text-[#000000]">{t('dialog.failureAlertChannel')}</p>
+                <input
+                  value={createFailureAlertChannel}
+                  onChange={(e) => setCreateFailureAlertChannel(e.target.value)}
                   placeholder="ops-alerts"
                   className="w-full rounded-lg border border-black/10 px-3 py-2 text-[13px] outline-none focus:border-clawx-ac"
                 />
               </label>
             </div>
-              <label className="mb-5 flex items-center gap-2 text-[13px] text-[#3c3c43]">
-                <input
-                  aria-label={t('dialog.bestEffortAria')}
-                  type="checkbox"
-                  checked={createDeliveryBestEffort}
-                  onChange={(e) => setCreateDeliveryBestEffort(e.target.checked)}
-                />
-                {t('dialog.bestEffort')}
-              </label>
-              <div className="flex gap-2">
-                <button type="button" onClick={() => { setCreateOpen(false); resetWizard(); }} className="flex-1 rounded-xl border border-black/10 py-2 text-[13px] text-[#3c3c43] hover:bg-[#f2f2f7]">{t('dialog.cancel')}</button>
-                <button type="button" onClick={() => void handleCreate()} disabled={createLoading || !createName.trim() || !createMessage.trim()} className="flex-1 rounded-xl bg-clawx-ac py-2 text-[13px] font-medium text-white hover:bg-[#0056b3] disabled:opacity-50">
-                  {createLoading ? (editingJob ? t('dialog.savingChanges') : t('dialog.creating')) : (editingJob ? t('dialog.saveChanges') : t('dialog.confirmCreate'))}
-                </button>
-              </div>
+            <label className="mb-5 flex items-center gap-2 text-[13px] text-[#3c3c43]">
+              <input
+                aria-label={t('dialog.bestEffortAria')}
+                type="checkbox"
+                checked={createDeliveryBestEffort}
+                onChange={(e) => setCreateDeliveryBestEffort(e.target.checked)}
+              />
+              {t('dialog.bestEffort')}
+            </label>
+            <div className="flex gap-2">
+              <button type="button" onClick={() => { setCreateOpen(false); resetWizard(); }} className="flex-1 rounded-xl border border-black/10 py-2 text-[13px] text-[#3c3c43] hover:bg-[#f2f2f7]">{t('dialog.cancel')}</button>
+              <button type="button" onClick={() => void handleCreate()} disabled={createLoading || !createName.trim() || !createMessage.trim()} className="flex-1 rounded-xl bg-clawx-ac py-2 text-[13px] font-medium text-white hover:bg-[#0056b3] disabled:opacity-50">
+                {createLoading ? (editingJob ? t('dialog.savingChanges') : t('dialog.creating')) : (editingJob ? t('dialog.saveChanges') : t('dialog.confirmCreate'))}
+              </button>
             </div>
+          </div>
         </div>
       )}
     </div>
@@ -639,26 +640,26 @@ function ScheduleTab({ jobs }: { jobs: CronJob[] }) {
       </div>
 
       {/* Right: upcoming panel */}
-        <div className="flex w-[220px] shrink-0 flex-col border-l border-black/[0.06] bg-[#f9f9f9]">
-          <div className="border-b border-black/[0.06] px-4 py-3">
-            <p className="text-[12px] font-semibold text-[#3c3c43]">{t('scheduleDetails.upcoming.title')}</p>
-          </div>
-          <div className="flex-1 overflow-y-auto">
-            {upcoming.length === 0 ? (
-              <div className="flex flex-col items-center justify-center gap-1 py-8 text-center">
-                <span className="text-[24px]">⏰</span>
-                <p className="text-[12px] text-[#c6c6c8]">{t('scheduleDetails.upcoming.emptyTitle')}</p>
-              </div>
-            ) : (
-              <div className="flex flex-col gap-0">
-                {upcoming.map((job) => (
-                  <div key={job.id} className="border-b border-black/[0.04] px-4 py-3">
-                    <p className="truncate text-[13px] font-medium text-[#000000]">{job.name}</p>
-                    <p className="mt-0.5 text-[11px] text-clawx-ac">{formatTime(job.nextRun, resolvedLanguage, t('common.unknown'))}</p>
-                    <p className="mt-0.5 font-mono text-[10px] text-[#c6c6c8]">{formatSchedule(job.schedule, t)}</p>
-                  </div>
-                ))}
-              </div>
+      <div className="flex w-[220px] shrink-0 flex-col border-l border-black/[0.06] bg-[#f9f9f9]">
+        <div className="border-b border-black/[0.06] px-4 py-3">
+          <p className="text-[12px] font-semibold text-[#3c3c43]">{t('scheduleDetails.upcoming.title')}</p>
+        </div>
+        <div className="flex-1 overflow-y-auto">
+          {upcoming.length === 0 ? (
+            <div className="flex flex-col items-center justify-center gap-1 py-8 text-center">
+              <span className="text-[24px]">⏰</span>
+              <p className="text-[12px] text-[#c6c6c8]">{t('scheduleDetails.upcoming.emptyTitle')}</p>
+            </div>
+          ) : (
+            <div className="flex flex-col gap-0">
+              {upcoming.map((job) => (
+                <div key={job.id} className="border-b border-black/[0.04] px-4 py-3">
+                  <p className="truncate text-[13px] font-medium text-[#000000]">{job.name}</p>
+                  <p className="mt-0.5 text-[11px] text-clawx-ac">{formatTime(job.nextRun, resolvedLanguage, t('common.unknown'))}</p>
+                  <p className="mt-0.5 font-mono text-[10px] text-[#c6c6c8]">{formatSchedule(job.schedule, t)}</p>
+                </div>
+              ))}
+            </div>
           )}
         </div>
       </div>

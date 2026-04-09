@@ -1,31 +1,18 @@
-
 <p align="center">
   <img src="src/assets/logo.svg" width="128" height="128" alt="ClawCorp Logo" />
 </p>
 
-<h1 align="center">ClawCorp</h1>
+<h1 align="center">ClawCorp — 全AI员工的公司操作系统</h1>
 
 <p align="center">
-  <strong>OpenClaw AI 智能体的桌面客户端</strong>
-</p>
-
-<p align="center">
-  <a href="#功能特性">功能特性</a> •
-  <a href="#为什么选择-clawcorp">为什么选择 ClawCorp</a> •
-  <a href="#快速上手">快速上手</a> •
-  <a href="#系统架构">系统架构</a> •
-  <a href="#开发指南">开发指南</a> •
-  <a href="#参与贡献">参与贡献</a>
+  <strong>雇一支 AI 军团，运转一家完整公司。</strong>
 </p>
 
 <p align="center">
   <img src="https://img.shields.io/badge/platform-MacOS%20%7C%20Windows%20%7C%20Linux-blue" alt="Platform" />
-  <img src="https://img.shields.io/badge/electron-40+-47848F?logo=electron" alt="Electron" />
-  <img src="https://img.shields.io/badge/react-19-61DAFB?logo=react" alt="React" />
   <a href="https://discord.com/invite/84Kex3GGAh" target="_blank">
   <img src="https://img.shields.io/discord/1399603591471435907?logo=discord&labelColor=%20%235462eb&logoColor=%20%23f5f5f5&color=%20%235462eb" alt="chat on Discord" />
   </a>
-  <img src="https://img.shields.io/github/downloads/ValueCell-ai/ClawCorp/total?color=%23027DEB" alt="Downloads" />
   <img src="https://img.shields.io/badge/license-MIT-green" alt="License" />
 </p>
 
@@ -37,465 +24,87 @@
 
 ## 概述
 
-**ClawCorp** 是连接强大 AI 智能体与普通用户之间的桥梁。基于 [OpenClaw](https://github.com/OpenClaw) 构建，它将命令行式的 AI 编排转变为易用、美观的桌面体验——无需使用终端。
+从产品调研、开发部署到社媒营销，ClawCorp 让数字员工完成一切闭环。**你只需输入一句话，剩下的交给 AI 军团。**
 
-无论是自动化工作流、连接通讯软件，还是调度智能定时任务，ClawCorp 都能提供高效易用的图形界面，帮助你充分发挥 AI 智能体的能力。
+就像柯达用“你只需按快门，剩下的交给我们”让摄影大众化，ClawCorp 用同样逻辑重塑公司运营：把创业中的复杂流程压缩成一条指令。
 
-ClawCorp 预置了最佳实践的模型供应商配置，原生支持 Windows 平台以及多语言设置。当然，你也可以通过 **设置 → 高级 → 开发者模式** 来进行精细的高级配置。
+## 运转方式
 
----
+1. **输入一句话**：在指令中心描述你的业务目标。
+2. **AI 员工自动执行**：AI PM、AI Dev、AI MKT 自动协作，任务节点全程透明。
+3. **闭环自进化**：用反馈数据放大高效策略、淘汰低效路径，让 ROI 持续优化。
 
-## 截图预览
+## 核心功能
 
-<p align="center">
-  <img src="resources/screenshot/zh/chat.png" style="width: 100%; height: auto;">
-</p>
+### 🎯 指令中心：一句话，启动全流程
+在指令中心输入你的目标，ClawCorp 自动拆解任务并分配给各职能 AI 员工。任务节点时间线实时透明，PRD、代码块、分析报告等中间产物全程可查。
+- 一句话驱动完整任务链
+- 任务 Stepper 节点透明追踪
+- 中间产物实时输出
 
-<p align="center">
-  <img src="resources/screenshot/zh/cron.png" style="width: 100%; height: auto;">
-</p>
+### 🏪 Claw Store：发现并雇佣数字员工
+人才市集汇聚全球最优秀的 AI 员工。按类别筛选、一键雇佣即加入你的团队。每位员工背后都有其专属精调的 System Prompt、行业 RAG 与工具链。
+- 开发、运营、数据、合规等多类专才一应俱全
+- 支持订阅或买断，灵活定价
+- 你也可以上架自建员工，赚取收益
 
-<p align="center">
-  <img src="resources/screenshot/zh/skills.png" style="width: 100%; height: auto;">
-</p>
+### 👥 人力资产：管理你的数字团队
+花名册一览团队状态，每位员工有完整的绩效看板（消耗/产出比，即 ROI 实时可见）。表现不佳则一键辞退，随时从 Store 中补充新员工。
+- 掌控全生命周期：入职 → 培训 → 服役 → 淘汰
+- Token 消耗与 ROI 实时监控
+- 自定义 Prompt、权限与独立的知识库
 
-<p align="center">
-  <img src="resources/screenshot/zh/channels.png" style="width: 100%; height: auto;">
-</p>
+### 📊 指挥中枢：实时掌控全局运转
+多员工协同如何落地？任务看板展示了执行中任务数、员工负荷甘特图，以及今日完成闭环数。点击任意员工，即可穿透查看任务耗时及历史交互日志。
+- 多员工协同甘特图
+- 可交互实时日志
+- 任务状态一键穿透监控
 
-<p align="center">
-  <img src="resources/screenshot/zh/models.png" style="width: 100%; height: auto;">
-</p>
-
-<p align="center">
-  <img src="resources/screenshot/zh/settings.png" style="width: 100%; height: auto;">
-</p>
-
----
-
-## 为什么选择 ClawCorp
-
-构建 AI 智能体不应该需要精通命令行。ClawCorp 的设计理念很简单：**强大的技术值得拥有一个尊重用户时间的界面。**
-
-| 痛点 | ClawCorp 解决方案 |
-|------|----------------|
-| 复杂的命令行配置 | 一键安装，配合引导式设置向导 |
-| 手动编辑配置文件 | 可视化设置界面，实时校验 |
-| 进程管理繁琐 | 自动管理网关生命周期 |
-| 多 AI 供应商切换 | 统一的供应商配置面板 |
-| 技能/插件安装复杂 | 内置技能市场与管理界面 |
-
-### 内置 OpenClaw 核心
-
-ClawCorp 直接基于官方 **OpenClaw** 核心构建。无需单独安装，我们将运行时嵌入应用内部，提供开箱即用的无缝体验。
-
-我们致力于与上游 OpenClaw 项目保持严格同步，确保你始终可以使用官方发布的最新功能、稳定性改进和生态兼容性。
+### 🔗 生态网关：打通你的工作流生态
+OAuth 一键绑定企业微信、飞书、钉钉、Slack。你可以指定任意频道由某位特定的数字员工负责监听、分发消息与自动回复，实现企业内外的全渠道覆盖。
+- 集成企业微信、飞书、钉钉、Slack
+- 消息路由按员工职能智能分配
+- 自动回复结合工作流任务触发
 
 ---
 
-## 功能特性
+## 快速开始
 
-### 🎯 零配置门槛
-从安装到第一次 AI 对话，全程通过直观的图形界面完成。无需终端命令，无需 YAML 文件，无需到处寻找环境变量。
+1. **下载与安装**：下载对应平台的应用客户端（支持 macOS、Windows、Linux）。
+2. **连接 AI**：在设置向导中配置模型供应商。
+3. **开始下达指令**：进入主指令大厅，开始你的自动化探索之路。
 
-### 💬 智能聊天界面
-通过现代化的聊天体验与 AI 智能体交互。支持多会话上下文、消息历史记录、Markdown 富文本渲染，以及在多 Agent 场景下通过主输入框中的 `@agent` 直接路由到目标智能体。
-当你使用 `@agent` 选择其他智能体时，ClawCorp 会直接切换到该智能体自己的对话上下文，而不是经过默认智能体转发。各 Agent 工作区默认彼此分离，但更强的运行时隔离仍取决于 OpenClaw 的 sandbox 配置。
-聊天输入框现在也支持 `/new`、`/stop`、`/agent`、`/cwd`、`/memory`、`/cron`、`/settings`、`/export` 等 slash commands，用键盘即可完成常见本地操作。
-侧边栏全局搜索支持通过 `Ctrl/Cmd+K` 打开，并且已经可以搜索会话、分身、页面以及缓存的聊天历史正文。会话支持在侧边栏置顶，导出能力保留在 `/export` 与聊天页 `会话` 抽屉中。侧边栏底部现在收敛为单一“上传文件”入口，Activity 页面也已从原始日志文本升级为可过滤、可展开 raw line、支持 live 自动刷新的结构化事件视图。
+### 下载与构建
 
-### 🧪 丰富 Markdown 渲染
-聊天 Markdown 现在除了普通数学公式外，也支持 KaTeX `mhchem` 化学公式，并保留代码高亮、本地文件链接和代码复制能力。
-
-### 📡 多频道管理
-同时配置和监控多个 AI 频道。每个频道独立运行，允许你为不同任务运行专门的智能体。
-飞书接入现在已经收口为一个应用内一体化向导：插件检查、创建/关联机器人、保存凭证、补齐应用权限，以及用户扫码授权都可以在 ClawCorp 内连续完成。
-频道工作台现在也支持账号级配置与切换：你可以在当前产品形态下查看同一渠道的多个账号、切换默认账号、维护账号绑定关系，并通过统一的目标解析接口为飞书、微信、企微、钉钉、QQ 等渠道准备可发送目标。
-
-### ⏰ 定时任务自动化
-调度 AI 任务自动执行。定义触发器、设置时间间隔，让 AI 智能体 7×24 小时不间断工作。
-Cron 页面也补上了更完整的运行详情面板，可直接查看 delivery 目标、最近错误上下文和最近运行历史。
-Agent 详情页现在也能展示后端计算出的 cron 关联关系，并直接 deep link 到对应的 Cron 流水线详情。
-
-### 👥 团队控制面（MVP）
-ClawCorp 现在把团队页从“静态成员列表”升级为“角色化控制面”。
-在 `Agent 详情` 中，可以为每个成员配置 `teamRole`（`leader` / `worker`）、`chatAccess`（`direct` / `leader_only`）和 `responsibility`。
-其中 `leader_only` 已经在工作台的普通直聊入口上变成系统级约束：用户应通过其汇报链上的 Leader 发起请求，而不是直接打开该 Worker 的聊天会话。
-团队页面现在也会展示对外频道入口的归属关系，以及基于现有 kanban/runtime 派生出的轻量工作态，让你能快速看出谁在负责入口、谁被阻塞、谁在等待审批或正在执行任务。
-`团队总览` 与 `团队地图` 会结合这些团队语义和运行时活跃信号，帮助你快速判断谁负责协调、谁负责执行，以及哪些成员应通过 Leader 间接协作。
-Phase 4 继续把这套团队控制台产品化：`团队总览` 现在以 Leader 简报为核心，`团队地图` 节点和详情抽屉会直接展示协作态，而私聊 Leader 时也能打开轻量的 `团队简报` 面板，快速跳转到成员详情或任务看板。
-
-### 🧩 可扩展技能系统
-通过预构建的技能扩展 AI 智能体的能力。在集成的技能面板中浏览、安装和管理技能——无需包管理器。
-ClawCorp 还会内置预装完整的文档处理技能（`pdf`、`xlsx`、`docx`、`pptx`），在启动时自动部署到托管技能目录（默认 `~/.openclaw/skills`），并在首次安装时默认启用。额外预装技能（`find-skills`、`self-improving-agent`、`tavily-search`、`brave-web-search`、`bocha-skill`）也会默认启用；若缺少必需的 API Key，OpenClaw 会在运行时给出配置错误提示。  
-Skills 页面可展示来自多个 OpenClaw 来源的技能（托管目录、workspace、额外技能目录），并显示每个技能的实际路径，便于直接打开真实安装位置。
-
-重点搜索技能所需环境变量：
-- `BRAVE_SEARCH_API_KEY`：用于 `brave-web-search`
-- `TAVILY_API_KEY`：用于 `tavily-search`（上游运行时也可能支持 OAuth）
-- `BOCHA_API_KEY`：用于 `bocha-skill`
-
-### 🔐 安全的供应商集成
-连接多个 AI 供应商（OpenAI、Anthropic 等），凭证安全存储在系统原生密钥链中。OpenAI 同时支持 API Key 与浏览器 OAuth（Codex 订阅）登录。
-
-### 🌙 自适应主题
-支持浅色模式、深色模式或跟随系统主题。ClawCorp 自动适应你的偏好设置。
-
-### 🚀 开机启动控制
-在 **设置 → 通用** 中，你可以开启 **开机自动启动**，让 ClawCorp 在系统登录后自动启动。
-
----
-
-## 快速上手
-
-### 系统要求
-
-- **操作系统**：macOS 11+、Windows 10+ 或 Linux（Ubuntu 20.04+）
-- **内存**：最低 4GB RAM（推荐 8GB）
-- **存储空间**：1GB 可用磁盘空间
-
-### 安装方式
-
-#### 预构建版本（推荐）
-
-从 [Releases](https://github.com/ValueCell-ai/ClawCorp/releases) 页面下载适用于你平台的最新版本。
-
-#### 从源码构建
-
+**源码本地运行：**
 ```bash
 # 克隆仓库
 git clone https://github.com/ValueCell-ai/ClawCorp.git
 cd ClawCorp
 
-# 初始化项目
+# 初始化项目并启动
 pnpm run init
-
-# 以开发模式启动
 pnpm dev
 ```
-### 首次启动
-
-首次启动 ClawCorp 时，**设置向导** 将引导你完成以下步骤：
-
-1. **语言与区域** – 配置你的首选语言和地区
-2. **AI 供应商** – 通过 API 密钥或 OAuth（支持浏览器/设备登录的供应商）添加账号
-3. **技能包** – 选择适用于常见场景的预配置技能
-4. **验证** – 在进入主界面前测试你的配置
-
-如果系统语言在支持列表中，向导会默认选中该语言；否则回退到英文。
-
-> Moonshot（Kimi）说明：ClawCorp 默认保持开启 Kimi 的 web search。  
-> 当配置 Moonshot 后，ClawCorp 也会将 OpenClaw 配置中的 Kimi web search 同步到中国区端点（`https://api.moonshot.cn/v1`）。
-
-### 代理设置
-
-ClawCorp 内置了代理设置，适用于需要通过本地代理客户端访问外网的场景，包括 Electron 本身、OpenClaw Gateway，以及 Telegram 这类频道的联网请求。
-
-打开 **设置 → 网关 → 代理**，配置以下内容：
-
-- **代理服务器**：所有请求默认使用的代理
-- **绕过规则**：需要直连的主机，使用分号、逗号或换行分隔
-- 在 **开发者模式** 下，还可以单独覆盖：
-  - **HTTP 代理**
-  - **HTTPS 代理**
-  - **ALL_PROXY / SOCKS**
-
-本地代理的常见填写示例：
-
-```text
-代理服务器: http://127.0.0.1:7890
-```
-说明：
-
-- 只填写 `host:port` 时，会按 HTTP 代理处理。
-- 高级代理项留空时，会自动回退到“代理服务器”。
-- 保存代理设置后，Electron 网络层会立即重新应用代理，并自动重启 Gateway。
-- 如果启用了 Telegram，ClawCorp 还会把代理同步到 OpenClaw 的 Telegram 频道配置中。
-- 在 **设置 → 高级 → 开发者** 中，可以直接运行 **OpenClaw Doctor**，执行 `openclaw doctor --json` 并在应用内查看诊断输出。
 
 ---
 
-## 系统架构
+## 加入候补名单 (内测)
 
-ClawCorp 采用 **双进程 + Host API 统一接入架构**。渲染进程只调用统一客户端抽象，协议选择与进程生命周期由 Electron 主进程统一管理：
-
-```┌─────────────────────────────────────────────────────────────────┐
-│                        ClawCorp 桌面应用                             │
-│                                                                  │
-│  ┌────────────────────────────────────────────────────────────┐  │
-│  │              Electron 主进程                                 │  │
-│  │  • 窗口与应用生命周期管理                                      │  │
-│  │  • 网关进程监控                                               │  │
-│  │  • 系统集成（托盘、通知、密钥链）                                │  │
-│  │  • 自动更新编排                                               │  │
-│  └────────────────────────────────────────────────────────────┘  │
-│                              │                                    │
-│                              │ IPC（权威控制面）                    │
-│                              ▼                                    │
-│  ┌────────────────────────────────────────────────────────────┐  │
-│  │              React 渲染进程                                   │  │
-│  │  • 现代组件化 UI（React 19）                                   │  │
-│  │  • Zustand 状态管理                                           │  │
-│  │  • 统一 host-api/api-client 调用                               │  │
-│  │  • Markdown 富文本渲染                                        │  │
-│  └────────────────────────────────────────────────────────────┘  │
-└──────────────────────────────┬──────────────────────────────────┘
-                               │
-                               │ 主进程统一传输策略
-                               │（WS 优先，HTTP 次之，IPC 回退）
-                               ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                  Host API 与主进程代理层                          │
-│                                                                  │
-│  • hostapi:fetch（主进程代理，规避开发/生产 CORS）                │
-│  • gateway:httpProxy（渲染进程不直连 Gateway HTTP）               │
-│  • 统一错误映射与重试/退避策略                                     │
-└──────────────────────────────┬──────────────────────────────────┘
-                               │
-                               │ WS / HTTP / IPC 回退
-                               ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                     OpenClaw 网关                                 │
-│                                                                  │
-│  • AI 智能体运行时与编排                                          │
-│  • 消息频道管理                                                   │
-│  • 技能/插件执行环境                                              │
-│  • 供应商抽象层                                                   │
-└─────────────────────────────────────────────────────────────────┘
-```
-### 设计原则
-
-- **进程隔离**：AI 运行时在独立进程中运行，确保即使在高负载计算期间 UI 也能保持响应
-- **前端调用单一入口**：渲染层统一走 host-api/api-client，不感知底层协议细节
-- **主进程掌控传输策略**：WS/HTTP 选择与 IPC 回退在主进程集中处理，提升稳定性
-- **优雅恢复**：内置重连、超时、退避逻辑，自动处理瞬时故障
-- **安全存储**：API 密钥和敏感数据利用操作系统原生的安全存储机制
-- **CORS 安全**：本地 HTTP 请求由主进程代理，避免渲染进程跨域问题
+首批用户将获得专属折扣与优先配置支持。
+请访问 [ClawCorp 官网](https://clawcorp.top/#waitlist) 留下邮箱，或者[加入官方 Discord](https://discord.com/invite/84Kex3GGAh)，获取第一时间产品内测通知。
 
 ---
 
-## 使用场景
-
-### 🤖 个人 AI 助手
-配置一个通用 AI 智能体，可以回答问题、撰写邮件、总结文档并协助处理日常任务——全部通过简洁的桌面界面完成。
-
-### 📊 自动化监控
-设置定时智能体来监控新闻动态、追踪价格变动或监听特定事件。结果将推送到你偏好的通知渠道。
-
-### 💻 开发者效率工具
-将 AI 融入你的开发工作流。使用智能体进行代码审查、生成文档或自动化重复性编码任务。
-
-### 🔄 工作流自动化
-将多个技能串联起来，创建复杂的自动化流水线。处理数据、转换内容、触发操作——全部通过可视化方式编排。
-
----
-
-## 开发指南
-
-### 前置要求
-
-- **Node.js**：22+（推荐 LTS 版本）
-- **包管理器**：通过 Corepack 使用固定版本 `pnpm@10.31.0`（`corepack enable && corepack prepare pnpm@10.31.0 --activate`）
-
-### 项目结构
-
-```ClawCorp/
-├── electron/                 # Electron 主进程
-│   ├── api/                 # 主进程 API 路由与处理器
-│   │   └── routes/          # RPC/HTTP 代理路由模块
-│   ├── services/            # Provider、Secrets 与运行时服务
-│   │   ├── providers/       # Provider/account 模型同步逻辑
-│   │   └── secrets/         # 系统钥匙串与密钥存储
-│   ├── shared/              # 共享 Provider schema/常量
-│   │   └── providers/
-│   ├── main/                # 应用入口、窗口、IPC 注册
-│   ├── gateway/             # OpenClaw 网关进程管理
-│   ├── preload/             # 安全 IPC 桥接
-│   └── utils/               # 工具模块（存储、认证、路径）
-├── src/                      # React 渲染进程
-│   ├── lib/                 # 前端统一 API 与错误模型
-│   ├── stores/              # Zustand 状态仓库（settings/chat/gateway）
-│   ├── components/          # 可复用 UI 组件
-│   ├── pages/               # Setup/Dashboard/Chat/Channels/Skills/Cron/Settings
-│   ├── i18n/                # 国际化资源
-│   └── types/               # TypeScript 类型定义
-├── tests/
-│   └── unit/                # Vitest 单元/集成型测试
-├── resources/                # 静态资源（图标、图片）
-└── scripts/                  # 构建与工具脚本
-```
-### 常用命令
-
-```bash
-# 开发
-pnpm run init             # 安装依赖并下载 uv
-pnpm dev                  # 以热重载模式启动
-
-# 代码质量
-pnpm run lint             # 运行 ESLint 只读检查
-pnpm run lint:a11y        # 运行聚焦的无障碍 lint 门禁
-pnpm run lint:fix         # 运行 ESLint 并自动修复
-pnpm typecheck            # TypeScript 类型检查
-
-# 测试
-pnpm test                 # 运行单元测试
-pnpm run test:a11y        # 运行聚焦的无障碍回归测试
-pnpm run test:e2e         # 运行 Playwright E2E 测试
-pnpm run test:e2e:headed  # 以有头模式运行 Playwright E2E 测试
-pnpm run smoke:linux      # Linux release + install smoke（非破坏性校验）
-pnpm run comms:replay     # 计算通信回放指标
-pnpm run comms:baseline   # 刷新通信基线快照
-pnpm run comms:compare    # 将回放指标与基线阈值对比
-
-# 构建与打包
-pnpm run build:vite       # 仅构建前端
-pnpm build                # 完整生产构建（含打包资源）
-pnpm package              # 为当前平台打包
-pnpm package:mac          # 为 macOS 打包
-pnpm package:win          # 为 Windows 打包
-pnpm package:linux        # 为 Linux 打包
-pnpm package:mac:ci       # CI 用 macOS 打包（不发布）
-pnpm package:win:ci       # CI 用 Windows 打包（不发布）
-pnpm package:linux:ci     # CI 用 Linux 打包（不发布）
-pnpm run governance:check # 运行 knip + dependency-cruiser 工程治理检查
-```
-
-### 通信回归检查
-
-当 PR 涉及通信链路（Gateway 事件、Chat 收发流程、Channel 投递、传输回退）时，建议执行：
-
-```bash
-pnpm run comms:replay
-pnpm run comms:compare
-```
-
-CI 中的 `comms-regression` 会校验必选场景与阈值。
-
-### 无障碍与工程治理门禁
-
-当改动涉及共享 UI、渲染层可访问性或模块边界时，提交前请运行以下聚焦门禁：
-
-```bash
-pnpm run lint:a11y
-pnpm run test:a11y
-pnpm run governance:check
-```
-
-`lint:a11y` 当前覆盖 Activity、Cron、Settings 和 Workbench 空状态页面；`test:a11y` 运行对应的 `vitest-axe` 回归；`governance:check` 会串行执行 `knip` 与 `dependency-cruiser` 的边界检查。
-### 技术栈
-
-| 层级 | 技术 |
-|------|------|
-| 运行时 | Electron 40+ |
-| UI 框架 | React 19 + TypeScript |
-| 样式 | Tailwind CSS + shadcn/ui |
-| 状态管理 | Zustand |
-| 构建工具 | Vite + electron-builder |
-| 测试 | Vitest + Playwright |
-| 动画 | Framer Motion |
-| 图标 | Lucide React |
-
----
-
-## 参与贡献
-
-我们欢迎社区的各种贡献！无论是修复 Bug、开发新功能、改进文档还是翻译——每一份贡献都让 ClawCorp 变得更好。
-
-### 如何贡献
-
-1. **Fork** 本仓库
-2. **创建** 功能分支（`git checkout -b feature/amazing-feature`）
-3. **提交** 清晰描述的变更
-4. **推送** 到你的分支
-5. **创建** Pull Request
-
-### 贡献规范
-
-- 遵循现有代码风格（ESLint + Prettier）
-- 为新功能编写测试
-- 按需更新文档
-- 保持提交原子化且描述清晰
-
----
-
-## 致谢
-
-ClawCorp 构建于以下优秀的开源项目之上：
-
-- [OpenClaw](https://github.com/OpenClaw) – AI 智能体运行时
-- [Electron](https://www.electronjs.org/) – 跨平台桌面框架
-- [React](https://react.dev/) – UI 组件库
-- [shadcn/ui](https://ui.shadcn.com/) – 精美设计的组件库
-- [Zustand](https://github.com/pmndrs/zustand) – 轻量级状态管理
-
----
-
-## 社区
-
-加入我们的社区，与其他用户交流、获取帮助、分享你的使用体验。
+## 社区与联系我们
 
 | 企业微信 | 飞书群组 | Discord |
 | :---: | :---: | :---: |
 | <img src="src/assets/community/wecom-qr.png" width="150" alt="企业微信二维码" /> | <img src="src/assets/community/feishu-qr.png" width="150" alt="飞书二维码" /> | <img src="src/assets/community/20260212-185822.png" width="150" alt="Discord 二维码" /> |
 
-### ClawCorp 合作伙伴计划 🚀
-
-我们正在启动 ClawCorp 合作伙伴计划，寻找能够帮助我们将 ClawCorp 介绍给更多客户的合作伙伴，尤其是那些有定制化 AI 智能体或自动化需求的客户。
-
-合作伙伴负责帮助我们连接潜在用户和项目，ClawCorp 团队则提供完整的技术支持、定制开发与集成服务。
-
-如果你服务的客户对 AI 工具或自动化方案感兴趣，欢迎与我们合作。
-
-欢迎私信我们，或发送邮件至 [public@valuecell.ai](mailto:public@valuecell.ai) 了解更多。
+合作咨询请发送邮件至：[public@valuecell.ai](mailto:public@valuecell.ai)
 
 ---
-
-## Stars 历史
-
-<p align="center">
-  <img src="https://api.star-history.com/svg?repos=ValueCell-ai/ClawCorp&type=Date" alt="Stars 历史图表" />
-</p>
-
----
-
-## 许可证
-
-ClawCorp 基于 [MIT 许可证](LICENSE) 发布。你可以自由地使用、修改和分发本软件。
-
----
-
 <p align="center">
   <sub>由 ValueCell 团队用 ❤️ 打造</sub>
 </p>
----
-
-## 频道补充说明
-
-频道同步会话现在与本地主会话彻底隔离：侧边栏会按账号实例展示 Bot，会在全局会话列表里加上渠道前缀，并允许你在中间栏重命名或移除同步会话，而不删除底层频道账号。频道配置弹层也支持在保存时显式选择要绑定的 Agent。
-
-## Codex Ralph Loop
-
-开发者如果想让 Codex 按 `prd.json` 持续迭代直到完成，可以使用仓库内置的 Ralph 循环脚本。
-
-需要的文件：
-
-- `scripts/ralph/ralph-codex.mjs`
-- `scripts/ralph/ralph-codex.sh`
-- `scripts/ralph/ralph-codex.ps1`
-- `scripts/ralph/CODEX.md`
-- `scripts/ralph/prd.json.example`
-- 仓库根目录的 `prd.json`
-
-示例命令：
-
-```bash
-pnpm run ralph:codex -- 999
-bash ./scripts/ralph/ralph-codex.sh 999
-bash ./scripts/ralph/ralph-codex.sh --forever
-```
-
-```powershell
-powershell -ExecutionPolicy Bypass -File .\scripts\ralph\ralph-codex.ps1 999
-```
-
-脚本内部会调用 `codex exec --dangerously-bypass-approvals-and-sandbox`，当代理输出 `<promise>COMPLETE</promise>` 时提前结束。

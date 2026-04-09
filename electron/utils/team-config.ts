@@ -1,6 +1,6 @@
 import { readOpenClawConfig, writeOpenClawConfig } from './channel-config';
 import { withConfigLock } from './config-mutex';
-import { listAgentsSnapshot } from './agent-config';
+import { listAgentsSnapshot, writeAgentSoulMd } from './agent-config';
 import { listTaskSnapshots } from './task-config';
 import type { Team, TeamSummary, CreateTeamRequest, UpdateTeamRequest, TeamStatus } from '../../src/types/team';
 import { randomUUID } from 'crypto';
@@ -182,6 +182,44 @@ export async function createTeam(request: CreateTeamRequest): Promise<TeamSummar
     config.agents = { ...agentsConfig, list: agentList };
     await writeOpenClawConfig(config);
 
+    // Write leader SOUL.md with team member info
+    const snapshot = await listAgentsSnapshot();
+    const workers = snapshot.agents.filter(
+      (a) => request.memberIds.includes(a.id)
+    );
+    const leaderSoulContent = [
+      `你是「${name}」团队的 Leader。`,
+      '',
+      '## 团队成员',
+      ...workers.map(
+        (w) => `- **${w.name}** (${w.id}): ${w.responsibility || '暂无职责描述'}`
+      ),
+      '',
+      '## 管理方式',
+      '- 收到任务时，根据成员职责分配给对应 worker',
+      '- 使用 sessions_spawn 创建子会话来委派任务',
+      '- 汇总 worker 结果后回复用户',
+      '',
+    ].join('\n');
+
+    await writeAgentSoulMd({
+      ...leader,
+      persona: leader.persona ? [leader.persona, leaderSoulContent].join('\n\n') : leaderSoulContent,
+      teamRole: 'leader',
+    });
+
+    // Write SOUL.md for each worker
+    for (const memberId of request.memberIds) {
+      const worker = snapshot.agents.find((a) => a.id === memberId);
+      if (worker) {
+        await writeAgentSoulMd({
+          ...worker,
+          teamRole: 'worker',
+          reportsTo: request.leaderId,
+        });
+      }
+    }
+
     return await buildTeamSummary(team);
   });
 }
@@ -255,6 +293,54 @@ export async function updateTeam(teamId: string, updates: UpdateTeamRequest): Pr
 
       config.agents = { ...agentsConfig, list: agentList };
       await writeOpenClawConfig(config);
+
+      // Sync SOUL.md for leader (with updated member list)
+      const newSnapshot = await listAgentsSnapshot();
+      const newWorkers = newSnapshot.agents.filter(
+        (a) => updatedTeam.memberIds.includes(a.id)
+      );
+      const leaderSoulContent = [
+        `你是「${updatedTeam.name}」团队的 Leader。`,
+        '',
+        '## 团队成员',
+        ...newWorkers.map(
+          (w) => `- **${w.name}** (${w.id}): ${w.responsibility || '暂无职责描述'}`
+        ),
+        '',
+        '## 管理方式',
+        '- 收到任务时，根据成员职责分配给对应 worker',
+        '- 使用 sessions_spawn 创建子会话来委派任务',
+        '- 汇总 worker 结果后回复用户',
+        '',
+      ].join('\n');
+      const leaderAgent = newSnapshot.agents.find((a) => a.id === updatedTeam.leaderId);
+      if (leaderAgent) {
+        await writeAgentSoulMd({
+          ...leaderAgent,
+          persona: leaderAgent.persona ? [leaderAgent.persona, leaderSoulContent].join('\n\n') : leaderSoulContent,
+          teamRole: 'leader',
+        });
+      }
+
+      // Rewrite SOUL.md for removed workers (clear team context)
+      for (const removedId of removedIds) {
+        const removedAgent = newSnapshot.agents.find((a) => a.id === removedId);
+        if (removedAgent) {
+          await writeAgentSoulMd(removedAgent);
+        }
+      }
+
+      // Write SOUL.md for newly added workers
+      for (const addedId of addedIds) {
+        const addedAgent = newSnapshot.agents.find((a) => a.id === addedId);
+        if (addedAgent) {
+          await writeAgentSoulMd({
+            ...addedAgent,
+            teamRole: 'worker',
+            reportsTo: updatedTeam.leaderId,
+          });
+        }
+      }
     }
 
     return await buildTeamSummary(updatedTeam);

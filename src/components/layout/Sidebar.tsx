@@ -44,17 +44,15 @@ type NavItemConfig = {
   icon: typeof LayoutDashboard;
 };
 
-function prefixChannelSessionLabel(sessionKey: string, label: string): string {
-  if (label.startsWith('[')) {
-    return label;
+function getSessionDisplayName(session: { key: string; displayName?: string; targetAgentId?: string; agentId?: string }, agents: Array<{ id: string; name: string }>): string {
+  // Priority: session.displayName (from Gateway) > agent name > raw session key
+  if (session.displayName) return session.displayName;
+  const agentId = session.targetAgentId ?? session.agentId;
+  if (agentId) {
+    const agent = agents.find((a) => a.id === agentId);
+    if (agent) return agent.name;
   }
-  if (/^agent:[^:]+:feishu:/.test(sessionKey)) {
-    return `[飞书] ${label}`;
-  }
-  if (/^agent:[^:]+:wechat:/.test(sessionKey)) {
-    return `[微信] ${label}`;
-  }
-  return label;
+  return session.key;
 }
 
 function SectionHeader({
@@ -199,7 +197,7 @@ export function Sidebar() {
 
   const sessions = useChatStore((state) => state.sessions);
   const currentSessionKey = useChatStore((state) => state.currentSessionKey);
-  const sessionLabels = useChatStore((state) => state.sessionLabels);
+  useChatStore.getState(); // ensure chat store is initialized
   const sessionLastActivity = useChatStore((state) => state.sessionLastActivity);
   const messages = useChatStore((state) => state.messages);
   const switchSession = useChatStore((state) => state.switchSession);
@@ -341,7 +339,7 @@ export function Sidebar() {
 
   const searchSessionsData = sessions.map((session) => ({
     key: session.key,
-    label: sessionLabels[session.key] ?? session.label ?? session.displayName ?? session.key,
+    label: getSessionDisplayName(session, agents),
   }));
 
   const searchAgents = agents.map((agent) => ({
@@ -539,14 +537,7 @@ export function Sidebar() {
               {sortedSessions.length > 0 ? (
                 <div className="space-y-2">
                   {sortedSessions.map((session) => {
-                    const label =
-                      prefixChannelSessionLabel(
-                        session.key,
-                        sessionLabels[session.key] ??
-                        session.label ??
-                        session.displayName ??
-                        session.key,
-                      );
+                    const label = getSessionDisplayName(session, agents);
                     const isPinned = pinnedSessionKeySet.has(session.key);
                     const isActive = currentSessionKey === session.key;
                     const messagePreview = getMessagePreview(session.key);

@@ -150,10 +150,34 @@ export async function readOpenClawConfig(): Promise<OpenClawConfig> {
     }
 }
 
+async function rotateConfigBackups(maxKept: number = 10): Promise<void> {
+    try {
+        const files = await readdir(OPENCLAW_DIR);
+        const bakFiles = files
+            .filter(f => f.startsWith('openclaw.json.bak.'))
+            .sort()
+            .reverse();
+        // Remove old backups beyond maxKept
+        for (const f of bakFiles.slice(maxKept)) {
+            try {
+                await rm(join(OPENCLAW_DIR, f), { force: true });
+            } catch { /* ignore */ }
+        }
+    } catch { /* ignore */ }
+}
+
 export async function writeOpenClawConfig(config: OpenClawConfig): Promise<void> {
     await ensureConfigDir();
 
     try {
+        // ── Auto-backup before write (protect against accidental full-list overwrites) ──
+        try {
+            const existingContent = await readFile(CONFIG_FILE, 'utf-8');
+            const ts = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
+            await writeFile(join(OPENCLAW_DIR, `openclaw.json.bak.${ts}`), existingContent, 'utf-8');
+            await rotateConfigBackups();
+        } catch { /* no existing file to back up — skip */ }
+
         await migrateClawCorpExtensionsOutOfOpenClawConfig(config as Record<string, unknown>);
 
         // Enable graceful in-process reload authorization for SIGUSR1 flows.

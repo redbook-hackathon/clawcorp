@@ -17,6 +17,9 @@ export interface AgentRuntimeMetadata {
   reportsTo?: string | null;
   chatAccess?: AgentChatAccess;
   responsibility?: string;
+  source?: string;
+  templateId?: string;
+  templateName?: string;
 }
 
 interface RuntimeMetadataDocument {
@@ -77,18 +80,21 @@ async function writeMetadataDocument(document: RuntimeMetadataDocument): Promise
 }
 
 function normalizeAgentRuntimeMetadata(value: unknown): AgentRuntimeMetadata {
-  const source = value && typeof value === 'object' ? value as Record<string, unknown> : {};
+  const src = value && typeof value === 'object' ? value as Record<string, unknown> : {};
   const next: AgentRuntimeMetadata = {};
 
-  if (typeof source.avatar === 'string') next.avatar = source.avatar;
-  if (source.avatar === null) next.avatar = null;
-  if (source.teamRole === 'leader' || source.teamRole === 'worker') next.teamRole = source.teamRole;
-  if (typeof source.reportsTo === 'string') next.reportsTo = source.reportsTo;
-  if (source.reportsTo === null) next.reportsTo = null;
-  if (source.chatAccess === 'direct' || source.chatAccess === 'leader_only') next.chatAccess = source.chatAccess;
-  if (typeof source.responsibility === 'string' && source.responsibility.trim()) {
-    next.responsibility = source.responsibility.trim();
+  if (typeof src.avatar === 'string') next.avatar = src.avatar;
+  if (src.avatar === null) next.avatar = null;
+  if (src.teamRole === 'leader' || src.teamRole === 'worker') next.teamRole = src.teamRole;
+  if (typeof src.reportsTo === 'string') next.reportsTo = src.reportsTo;
+  if (src.reportsTo === null) next.reportsTo = null;
+  if (src.chatAccess === 'direct' || src.chatAccess === 'leader_only') next.chatAccess = src.chatAccess;
+  if (typeof src.responsibility === 'string' && src.responsibility.trim()) {
+    next.responsibility = src.responsibility.trim();
   }
+  if (typeof src.source === 'string' && src.source.trim()) next.source = src.source.trim();
+  if (typeof src.templateId === 'string' && src.templateId.trim()) next.templateId = src.templateId.trim();
+  if (typeof src.templateName === 'string' && src.templateName.trim()) next.templateName = src.templateName.trim();
 
   return next;
 }
@@ -98,7 +104,10 @@ function hasMetadataValues(metadata: AgentRuntimeMetadata): boolean {
     || metadata.teamRole !== undefined
     || metadata.reportsTo !== undefined
     || metadata.chatAccess !== undefined
-    || metadata.responsibility !== undefined;
+    || metadata.responsibility !== undefined
+    || metadata.source !== undefined
+    || metadata.templateId !== undefined
+    || metadata.templateName !== undefined;
 }
 
 export async function readStoredTeams(): Promise<Team[]> {
@@ -114,10 +123,10 @@ export async function writeStoredTeams(teams: Team[]): Promise<void> {
 
 export async function readStoredAgentMetadata(): Promise<Record<string, AgentRuntimeMetadata>> {
   const document = await readMetadataDocument();
-  const source = document.agents && typeof document.agents === 'object' ? document.agents : {};
+  const agentsMap = document.agents && typeof document.agents === 'object' ? document.agents : {};
   const normalized: Record<string, AgentRuntimeMetadata> = {};
 
-  for (const [agentId, value] of Object.entries(source)) {
+  for (const [agentId, value] of Object.entries(agentsMap)) {
     if (!agentId.trim()) continue;
     const metadata = normalizeAgentRuntimeMetadata(value);
     if (hasMetadataValues(metadata)) {
@@ -223,6 +232,27 @@ export async function migrateClawCorpExtensionsOutOfOpenClawConfig(
           delete next.responsibility;
         }
         delete entry.responsibility;
+        consumed = true;
+      }
+
+      if ('source' in entry) {
+        const value = entry.source;
+        if (typeof value === 'string' && value.trim()) next.source = value.trim();
+        delete entry.source;
+        consumed = true;
+      }
+
+      if ('templateId' in entry) {
+        const value = entry.templateId;
+        if (typeof value === 'string' && value.trim()) next.templateId = value.trim();
+        delete entry.templateId;
+        consumed = true;
+      }
+
+      if ('templateName' in entry) {
+        const value = entry.templateName;
+        if (typeof value === 'string' && value.trim()) next.templateName = value.trim();
+        delete entry.templateName;
         consumed = true;
       }
 

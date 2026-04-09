@@ -4,6 +4,7 @@ import { join, normalize } from 'path';
 import { listConfiguredChannels, readOpenClawConfig, writeOpenClawConfig } from './channel-config';
 import { withConfigLock } from './config-mutex';
 import { expandPath, getOpenClawConfigDir, getResourcesDir } from './paths';
+import { readStoredAgentMetadata, writeStoredAgentMetadata } from './openclaw-runtime-metadata';
 import * as logger from './logger';
 
 const MAIN_AGENT_ID = 'main';
@@ -461,6 +462,7 @@ function listConfiguredAccountIdsForChannel(config: AgentConfigDocument, channel
 
 async function buildSnapshotFromConfig(config: AgentConfigDocument): Promise<AgentsSnapshot> {
   const { entries, defaultAgentId } = normalizeAgentsConfig(config);
+  const agentMetadata = await readStoredAgentMetadata();
   const configuredChannels = await listConfiguredChannels();
   const { channelToAgent, accountToAgent } = getChannelBindingMap(config.bindings);
   const defaultAgentIdNorm = normalizeAgentIdForBinding(defaultAgentId);
@@ -500,6 +502,7 @@ async function buildSnapshotFromConfig(config: AgentConfigDocument): Promise<Age
 
   const defaultModelLabel = formatModelLabel((config.agents as AgentsConfig | undefined)?.defaults?.model);
   const agents: AgentSummary[] = entries.map((entry) => {
+    const metadata = agentMetadata[entry.id] ?? {};
     const modelLabel = formatModelLabel(entry.model) || defaultModelLabel || 'Not configured';
     const inheritedModel = !formatModelLabel(entry.model) && Boolean(defaultModelLabel);
     const rawModel = typeof entry.model === 'string' ? entry.model.trim()
@@ -520,11 +523,13 @@ async function buildSnapshotFromConfig(config: AgentConfigDocument): Promise<Age
       agentDir: entry.agentDir || getDefaultAgentDirPath(entry.id),
       mainSessionKey: buildAgentMainSessionKey(config, entry.id),
       channelTypes: configuredChannels.filter((ct) => ownedChannels.has(ct)),
-      avatar: typeof entry.avatar === 'string' ? entry.avatar : null,
-      teamRole: normalizeAgentTeamRole(entry.teamRole, entry.id === defaultAgentId),
-      chatAccess: normalizeAgentChatAccess(entry.chatAccess),
-      responsibility: normalizeAgentResponsibility(entry.responsibility),
-      reportsTo: entry.reportsTo ?? (entry.id !== defaultAgentId ? defaultAgentId : null),
+      avatar: typeof metadata.avatar === 'string'
+        ? metadata.avatar
+        : (typeof entry.avatar === 'string' ? entry.avatar : null),
+      teamRole: normalizeAgentTeamRole(metadata.teamRole ?? entry.teamRole, entry.id === defaultAgentId),
+      chatAccess: normalizeAgentChatAccess(metadata.chatAccess ?? entry.chatAccess),
+      responsibility: normalizeAgentResponsibility(metadata.responsibility ?? entry.responsibility),
+      reportsTo: metadata.reportsTo ?? entry.reportsTo ?? (entry.id !== defaultAgentId ? defaultAgentId : null),
       directReports: [],
     };
   });
@@ -566,25 +571,36 @@ async function readTemplateAvatar(agentId: string): Promise<string | undefined> 
 
 export async function listAgentsSnapshot(): Promise<AgentsSnapshot> {
   const config = await readOpenClawConfig() as AgentConfigDocument;
+  const metadata = await readStoredAgentMetadata();
 
-  // Backfill avatars for agent entries that don't have one persisted
+  // Backfill avatars into metadata sidecar for agent entries that have no avatar yet.
   const agentsConfig = config.agents as Record<string, unknown> | undefined;
   const agentList = Array.isArray(agentsConfig?.list)
     ? (agentsConfig!.list as Array<Record<string, unknown>>)
     : [];
-  let configDirty = false;
+  let metadataDirty = false;
   for (const entry of agentList) {
-    if (entry.id && !entry.avatar) {
-      const avatar = await readTemplateAvatar(entry.id as string);
+    const agentId = typeof entry.id === 'string' ? entry.id : '';
+    if (!agentId) continue;
+    const current = metadata[agentId] ?? {};
+    if (!current.avatar && typeof entry.avatar === 'string') {
+      current.avatar = entry.avatar;
+      metadata[agentId] = current;
+      metadataDirty = true;
+      continue;
+    }
+    if (!current.avatar) {
+      const avatar = await readTemplateAvatar(agentId);
       if (avatar) {
-        entry.avatar = avatar;
-        configDirty = true;
+        current.avatar = avatar;
+        metadata[agentId] = current;
+        metadataDirty = true;
       }
     }
   }
-  if (configDirty) {
+  if (metadataDirty) {
     try {
-      await writeOpenClawConfig(config);
+      await writeStoredAgentMetadata(metadata);
     } catch {
       // non-critical — avatar backfill is best-effort
     }

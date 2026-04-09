@@ -26,6 +26,7 @@ import {
 import { OPENCLAW_WECHAT_CHANNEL_TYPE } from './channel-alias';
 import { withConfigLock } from './config-mutex';
 import { logger } from './logger';
+import { migrateClawCorpExtensionsOutOfOpenClawConfig } from './openclaw-runtime-metadata';
 
 const AUTH_STORE_VERSION = 1;
 const AUTH_PROFILE_FILENAME = 'auth-profiles.json';
@@ -897,6 +898,11 @@ export async function sanitizeOpenClawConfig(): Promise<void> {
   return withConfigLock(async () => {
     const config = await readOpenClawJson();
     let modified = false;
+
+    if (await migrateClawCorpExtensionsOutOfOpenClawConfig(config)) {
+      modified = true;
+      logger.info('[sanitize] Migrated ClawCorp-only metadata out of openclaw.json');
+    }
 
     // ── skills section ──────────────────────────────────────────────
     // OpenClaw's Zod schema uses .strict() on the skills object, accepting

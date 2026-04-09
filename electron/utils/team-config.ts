@@ -2,6 +2,7 @@ import { readOpenClawConfig, writeOpenClawConfig } from './channel-config';
 import { withConfigLock } from './config-mutex';
 import { listAgentsSnapshot, writeAgentSoulMd } from './agent-config';
 import { listTaskSnapshots } from './task-config';
+import { readStoredTeams, writeStoredTeams } from './openclaw-runtime-metadata';
 import type { Team, TeamSummary, CreateTeamRequest, UpdateTeamRequest, TeamStatus } from '../../src/types/team';
 import { randomUUID } from 'crypto';
 import { buildTeamTaskRollupMap } from '../../src/lib/task-summary-read-model';
@@ -19,8 +20,18 @@ interface ConfigDocument {
  * Read teams configuration from openclaw.json
  */
 export async function readTeamsConfig(): Promise<Team[]> {
+  const sidecarTeams = await readStoredTeams();
+  if (sidecarTeams.length > 0) {
+    return sidecarTeams;
+  }
+
   const config = await readOpenClawConfig() as ConfigDocument;
-  return config.teams?.teams ?? [];
+  const legacyTeams = config.teams?.teams ?? [];
+  if (legacyTeams.length > 0) {
+    await writeStoredTeams(legacyTeams);
+    return legacyTeams;
+  }
+  return [];
 }
 
 /**
@@ -28,9 +39,7 @@ export async function readTeamsConfig(): Promise<Team[]> {
  */
 async function writeTeamsConfig(teams: Team[]): Promise<void> {
   await withConfigLock(async () => {
-    const config = await readOpenClawConfig() as ConfigDocument;
-    config.teams = { teams };
-    await writeOpenClawConfig(config);
+    await writeStoredTeams(teams);
   });
 }
 
@@ -38,7 +47,7 @@ async function writeTeamsConfig(teams: Team[]): Promise<void> {
  * Calculate team status based on member activity
  * Per D-23: active if any member working, blocked if any blocked, else idle
  */
-function calculateTeamStatus(memberIds: string[], leaderId: string): TeamStatus {
+function calculateTeamStatus(_memberIds: string[], _leaderId: string): TeamStatus {
   // TODO: Implement actual status calculation based on agent activity
   // For now, default to 'idle' - will be enhanced when agent activity tracking is available
   return 'idle';

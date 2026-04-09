@@ -1304,7 +1304,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
                     const next: Partial<typeof s> = {};
                     if (firstUser) {
                       const labelText = getMessageText(firstUser.content).trim();
-                      if (labelText) {
+                      if (labelText && !s.sessionLabels[session.key]) {
                         const truncated = labelText.length > 50 ? `${labelText.slice(0, 50)}…` : labelText;
                         next.sessionLabels = { ...s.sessionLabels, [session.key]: truncated };
                       }
@@ -1581,7 +1581,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
         const firstUserMsg = finalMessages.find((m) => m.role === 'user');
         if (firstUserMsg) {
           const labelText = getMessageText(firstUserMsg.content).trim();
-          if (labelText) {
+          if (labelText && !get().sessionLabels[currentSessionKey]) {
             const truncated = labelText.length > 50 ? `${labelText.slice(0, 50)}…` : labelText;
             set((s) => ({
               sessionLabels: { ...s.sessionLabels, [currentSessionKey]: truncated },

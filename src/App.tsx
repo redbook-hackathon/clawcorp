@@ -18,11 +18,14 @@ const Channels = lazy(() => import('./pages/Channels').then((m) => ({ default: m
 const Cron = lazy(() => import('./pages/Cron').then((m) => ({ default: m.Cron })));
 const Settings = lazy(() => import('./pages/Settings').then((m) => ({ default: m.Settings })));
 const TeamOverview = lazy(() => import('./pages/TeamOverview').then((m) => ({ default: m.TeamOverview })));
+const EmployeeBuilder = lazy(() => import('./pages/EmployeeBuilder').then((m) => ({ default: m.EmployeeBuilder })));
 const TeamMap = lazy(() => import('./pages/TeamMap').then((m) => ({ default: m.TeamMap })));
 const TaskKanban = lazy(() => import('./pages/TaskKanban').then((m) => ({ default: m.TaskKanban })));
 const Activity = lazy(() => import('./pages/Activity').then((m) => ({ default: m.Activity })));
 const Setup = lazy(() => import('./pages/Setup').then((m) => ({ default: m.Setup })));
 const BroadcastChat = lazy(() => import('./pages/BroadcastChat').then((m) => ({ default: m.BroadcastChat })));
+const Marketplace = lazy(() => import('./pages/Marketplace').then((m) => ({ default: m.Marketplace })));
+const TeamBuilder = lazy(() => import('./pages/TeamBuilder').then((m) => ({ default: m.TeamBuilder })));
 import { useSettingsStore } from './stores/settings';
 import { useGatewayStore } from './stores/gateway';
 import { wireGatewayNotifications } from './stores/notifications';
@@ -221,10 +224,13 @@ function App() {
             <Route path="skills" element={<Navigate to="/settings?section=skills-mcp" replace />} />
             <Route path="cron" element={<Cron />} />
             <Route path="team-overview" element={<TeamOverview />} />
+            <Route path="employee-builder" element={<EmployeeBuilder />} />
+            <Route path="team-builder" element={<TeamBuilder />} />
             <Route path="team-map/:teamId" element={<TeamMap />} />
             <Route path="team-map" element={<Navigate to="/team-overview" replace />} />
             <Route path="broadcast" element={<BroadcastChat />} />
             <Route path="kanban" element={<TaskKanban />} />
+            <Route path="marketplace" element={<Marketplace />} />
             <Route path="activity" element={<Activity />} />
             {/* /memory 已迁移至 Settings > 记忆与知识 */}
             <Route path="memory" element={<Navigate to="/settings?section=memory-knowledge" replace />} />

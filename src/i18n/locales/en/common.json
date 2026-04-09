@@ -30,9 +30,11 @@
     "newSession": "New session",
     "toggleSidebar": "Toggle sidebar",
     "taskBoard": "Task board",
+    "marketplace": "Marketplace",
     "taskSchedule": "Task schedule",
     "memoryKnowledge": "Memory knowledge base",
     "costUsage": "Cost usage",
+    "humanAssets": "Human Assets",
     "teamOverview": "Team overview",
     "employeeSquare": "Employee square",
     "sessions": "Sessions",
@@ -530,6 +532,32 @@
       "idle": "空闲",
       "blocked": "阻塞"
     },
+    "humanAssets": {
+      "title": "Human Assets",
+      "subtitle": "Manage your digital workforce and their full lifecycle status",
+      "localImport": "Local Import",
+      "buildEmployee": "Build Employee",
+      "statusActive": "Active",
+      "statusTraining": "Training",
+      "statusMaintenance": "Maintenance",
+      "statusOnboarding": "Onboarding",
+      "statusRetired": "Retired",
+      "activeWorkforce": "Active Workforce",
+      "dailyWorkload": "Daily Workload",
+      "resourceConsumption": "Resource Consumption",
+      "viewProfile": "View Profile",
+      "runLogs": "Run Logs",
+      "configEdit": "Edit Config",
+      "assignTask": "Assign Task",
+      "deleteEmployee": "Delete",
+      "sourceMarketplace": "Marketplace",
+      "sourceLocal": "Local",
+      "sourceCustom": "Custom",
+      "team": "Team",
+      "employee": "Employee",
+      "members": "members",
+      "leader": "Leader"
+    },
     "groups": {
       "standalone": "独立"
     },
@@ -622,7 +650,62 @@
       "outputPlaceholder": "Recent output snapshots will appear here as the runtime reports progress.",
       "childRuntime": "Child runtime detail",
       "childRuntimePlaceholder": "No child runtime detail is available for this member yet."
+    },
+    "memberDetail": {
+      "description": "Manage this team member from the current team map.",
+      "openChat": "Open Chat",
+      "removeFromTeam": "Remove from Team",
+      "removeConfirm": "Are you sure you want to remove {{name}} from this team? This does not delete the agent.",
+      "role": "Role",
+      "chatAccess": "Chat Access",
+      "responsibility": "Responsibility",
+      "team": "Team",
+      "ownedEntryPoints": "Owned Entry Points",
+      "none": "—"
+    },
+    "memory": {
+      "empty": "No memory yet",
+      "saving": "Saving...",
+      "synced": "Synced",
+      "error": "Could not sync. Retry.",
+      "previewHint": "Toggle preview to inspect the rendered memory content.",
+      "showPreview": "Show Preview",
+      "hidePreview": "Hide Preview"
+    },
+    "activity": {
+      "noActiveWork": "No active work",
+      "status": "Status",
+      "currentWork": "Current Work",
+      "blockingReason": "Blocking Reason",
+      "nextStep": "Recommended Next Step",
+      "agentLabel": "Agent: {{name}}"
     }
+  },
+  "marketplace": {
+    "title": "Talent Marketplace",
+    "subtitle": "Discover and hire the world's top digital employees",
+    "searchPlaceholder": "Search agents...",
+    "priceLabel": "Deployment Cost",
+    "empty": "No matching agents found",
+    "clearFilters": "Clear filters",
+    "listEmployee": "List My Agent",
+    "allTypes": "All Types",
+    "hireCompany": "Hire Company",
+    "hireEmployee": "Hire Employee",
+    "hireCompanyHint": "Hire Company = SOP Workflow · Hire Employee = Single Agent",
+    "hiredCount": "Hired",
+    "listTitle": "List My Agent",
+    "listSubtitle": "Publish your Agent to the marketplace for other teams to discover and hire",
+    "agentName": "Agent Name",
+    "agentNamePlaceholder": "Name your Agent",
+    "agentType": "Listing Type",
+    "typeCompany": "Company (SOP Workflow)",
+    "typeEmployee": "Employee (Single Agent)",
+    "agentDesc": "Description",
+    "agentDescPlaceholder": "Describe what your Agent can do...",
+    "agentPrice": "Pricing",
+    "agentPricePlaceholder": "e.g. $29/mo or Free",
+    "submitListing": "Submit Listing"
   },
   "teamBrief": {
     "title": "Team Brief",
@@ -636,5 +719,12 @@
     "noNextSteps": "No additional follow-up steps are queued right now.",
     "openMember": "Open member",
     "openKanban": "Open Kanban"
+  },
+  "skills": {
+    "title": "Skills",
+    "noInstalled": "No skills installed yet. Install skills from the Settings page.",
+    "openSettings": "Open Skills Settings",
+    "assignFailed": "Failed to assign skill",
+    "removeFailed": "Failed to remove skill"
   }
 }

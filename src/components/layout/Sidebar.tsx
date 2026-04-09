@@ -1,16 +1,19 @@
 import { useEffect, useState, useMemo } from 'react';
 import {
+  Bell,
+  Bot,
   ChevronRight,
   LayoutDashboard,
   MessageSquare,
-  Network,
   PanelLeft,
   PanelLeftClose,
+  Pin,
   Plus,
   Radio,
   Search,
   Settings as SettingsIcon,
   Store,
+  Trash2,
   Users,
 } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -20,26 +23,39 @@ import { SessionItem } from '@/components/sessions/SessionItem';
 import { SessionSearchModal } from '@/components/sessions/SessionSearchModal';
 import { cn } from '@/lib/utils';
 import { usePinnedSessions } from '@/lib/pinned-sessions';
-import { resolveSessionDisplayLabel } from '@/lib/session-label';
 import { useAgentsStore } from '@/stores/agents';
 import { useChannelsStore } from '@/stores/channels';
 import { useChatStore } from '@/stores/chat';
 import { useGatewayStore } from '@/stores/gateway';
 import { useSettingsStore } from '@/stores/settings';
 import { useRightPanelStore } from '@/stores/rightPanelStore';
-import { ChannelIcon } from '@/components/channels/ChannelIcon';
+import { CHANNEL_ICONS, type Channel } from '@/types/channel';
 
+const CHAT_REQUEST_FILE_UPLOAD_EVENT = 'chat:request-file-upload';
+const CHAT_UPLOAD_PENDING_KEY = 'clawcorp:pending-upload';
 const NICKNAME_STORAGE_KEY = 'clawcorp-user-nickname';
 const LEGACY_NICKNAME_STORAGE_KEY = 'clawx-user-nickname';
 const AVATAR_STORAGE_KEY = 'clawcorp-user-avatar';
 const LEGACY_AVATAR_STORAGE_KEY = 'clawx-user-avatar';
-const HIDE_SIDEBAR_CHANNELS = true;
 
 type NavItemConfig = {
   label: string;
   path: string;
   icon: typeof LayoutDashboard;
 };
+
+function prefixChannelSessionLabel(sessionKey: string, label: string): string {
+  if (label.startsWith('[')) {
+    return label;
+  }
+  if (/^agent:[^:]+:feishu:/.test(sessionKey)) {
+    return `[飞书] ${label}`;
+  }
+  if (/^agent:[^:]+:wechat:/.test(sessionKey)) {
+    return `[微信] ${label}`;
+  }
+  return label;
+}
 
 function SectionHeader({
   icon: Icon,
@@ -183,6 +199,7 @@ export function Sidebar() {
 
   const sessions = useChatStore((state) => state.sessions);
   const currentSessionKey = useChatStore((state) => state.currentSessionKey);
+  const sessionLabels = useChatStore((state) => state.sessionLabels);
   const sessionLastActivity = useChatStore((state) => state.sessionLastActivity);
   const messages = useChatStore((state) => state.messages);
   const switchSession = useChatStore((state) => state.switchSession);
@@ -286,11 +303,6 @@ export function Sidebar() {
       path: '/kanban',
       icon: LayoutDashboard,
     },
-    {
-      label: tSidebar('gateway', '生态网关'),
-      path: '/gateway',
-      icon: Network,
-    },
   ];
 
   // Build message map for current session only (for message preview)
@@ -329,7 +341,7 @@ export function Sidebar() {
 
   const searchSessionsData = sessions.map((session) => ({
     key: session.key,
-    label: resolveSessionDisplayLabel(session, agents),
+    label: sessionLabels[session.key] ?? session.label ?? session.displayName ?? session.key,
   }));
 
   const searchAgents = agents.map((agent) => ({
@@ -341,6 +353,16 @@ export function Sidebar() {
     reportsTo: agent.reportsTo,
     isDefault: agent.isDefault,
   }));
+
+  const handleUploadClick = () => {
+    try {
+      sessionStorage.setItem(CHAT_UPLOAD_PENDING_KEY, '1');
+    } catch {
+      // ignore storage write issues
+    }
+    navigate('/');
+    window.dispatchEvent(new CustomEvent(CHAT_REQUEST_FILE_UPLOAD_EVENT));
+  };
 
   const handleNewSession = () => {
     setSessionsOpen(true);
@@ -396,7 +418,7 @@ export function Sidebar() {
       </div>
 
       <div className="mt-4 flex min-h-0 flex-1 flex-col overflow-y-auto custom-scrollbar">
-        <div className={cn('space-y-1', HIDE_SIDEBAR_CHANNELS && 'hidden')}>
+        <div className="space-y-1">
           <SectionHeader
             icon={Radio}
             label={tSidebar('channels', 'Channels')}
@@ -438,6 +460,7 @@ export function Sidebar() {
                   <>
                     {sortedBots.map((bot) => {
                       const isActive = bot.id === activeChannelId;
+                      const icon = CHANNEL_ICONS[bot.type] ?? '🔌';
                       const statusDotColor =
                         bot.status === 'connected'
                           ? 'bg-[#10b981]'
@@ -446,9 +469,6 @@ export function Sidebar() {
                             : bot.status === 'error'
                               ? 'bg-[#ef4444]'
                               : 'bg-[#94a3b8]';
-                      const boundAgent = bot.boundAgentId
-                        ? agents.find((a) => a.id === bot.boundAgentId)
-                        : null;
 
                       return (
                         <div
@@ -468,13 +488,8 @@ export function Sidebar() {
                             }}
                             className="flex min-w-0 flex-1 items-center gap-2"
                           >
-                            <ChannelIcon type={bot.type} size={16} />
+                            <span className="shrink-0 text-[14px]">{icon}</span>
                             <span className="truncate text-[13px]">{bot.name}</span>
-                            {boundAgent && (
-                              <span className="shrink-0 truncate text-[10px] font-medium text-indigo-500 bg-indigo-50 px-1.5 py-0.5 rounded-full max-w-[60px]">
-                                {boundAgent.name}
-                              </span>
-                            )}
                             <span className={cn('h-1.5 w-1.5 shrink-0 rounded-full', statusDotColor)} />
                           </button>
                           <button
@@ -524,7 +539,14 @@ export function Sidebar() {
               {sortedSessions.length > 0 ? (
                 <div className="space-y-2">
                   {sortedSessions.map((session) => {
-                    const label = resolveSessionDisplayLabel(session, agents);
+                    const label =
+                      prefixChannelSessionLabel(
+                        session.key,
+                        sessionLabels[session.key] ??
+                        session.label ??
+                        session.displayName ??
+                        session.key,
+                      );
                     const isPinned = pinnedSessionKeySet.has(session.key);
                     const isActive = currentSessionKey === session.key;
                     const messagePreview = getMessagePreview(session.key);

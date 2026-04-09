@@ -33,6 +33,7 @@ import {
 } from '../utils/channel-config';
 import { checkUvInstalled, installUv, setupManagedPython } from '../utils/uv-setup';
 import { updateSkillConfig, getSkillConfig, getAllSkillConfigs } from '../utils/skill-config';
+import { cloneWorkspaceFromTemplate, importLocalWorkspace, hireTeamFromTemplate, listMarketplaceTemplates, hireFromMarketplaceTemplate, hireTeamFromMarketplaceTemplate } from '../utils/openclaw-workspace';
 import { whatsAppLoginManager } from '../utils/whatsapp-login';
 import { getProviderConfig } from '../utils/provider-registry';
 import { deviceOAuthManager, OAuthProviderType } from '../utils/device-oauth';
@@ -146,6 +147,9 @@ export function registerIpcHandlers(
 
   // File staging handlers (upload/send separation)
   registerFileHandlers();
+
+  // Workspace handlers
+  registerWorkspaceHandlers();
 }
 
 type HostApiFetchRequest = {
@@ -2684,6 +2688,66 @@ function registerSessionHandlers(): void {
     } catch (err) {
       logger.error(`[session:delete] Unexpected error for ${sessionKey}:`, err);
       return { success: false, error: String(err) };
+    }
+  });
+}
+
+/**
+ * Workspace IPC handlers
+ * Wraps workspace operations from openclaw-workspace.ts
+ */
+function registerWorkspaceHandlers(): void {
+  ipcMain.handle('workspace:clone', async (_, templateId: string, agentName: string) => {
+    try {
+      const path = await cloneWorkspaceFromTemplate(templateId, agentName);
+      return { success: true, path };
+    } catch (error) {
+      return { success: false, error: error instanceof Error ? error.message : String(error) };
+    }
+  });
+
+  ipcMain.handle('workspace:import', async (_, sourcePath: string) => {
+    try {
+      const path = await importLocalWorkspace(sourcePath);
+      return { success: true, path };
+    } catch (error) {
+      return { success: false, error: error instanceof Error ? error.message : String(error) };
+    }
+  });
+
+  ipcMain.handle('workspace:hireTeam', async (_event, templateId: string, teamName: string, capabilities: string[]) => {
+    try {
+      const result = await hireTeamFromTemplate(templateId, teamName, capabilities);
+      return { success: true, ...result };
+    } catch (error) {
+      return { success: false, error: error instanceof Error ? error.message : String(error) };
+    }
+  });
+
+  ipcMain.handle('marketplace:listTemplates', async () => {
+    try {
+      const templates = await listMarketplaceTemplates();
+      return { success: true, templates };
+    } catch (error) {
+      return { success: false, error: error instanceof Error ? error.message : String(error) };
+    }
+  });
+
+  ipcMain.handle('marketplace:hireSingle', async (_event, templateId: string, agentName: string) => {
+    try {
+      const result = await hireFromMarketplaceTemplate(templateId, agentName);
+      return { success: true, ...result };
+    } catch (error) {
+      return { success: false, error: error instanceof Error ? error.message : String(error) };
+    }
+  });
+
+  ipcMain.handle('marketplace:hireTeam', async (_event, templateId: string, teamName: string, capabilities: string[]) => {
+    try {
+      const result = await hireTeamFromMarketplaceTemplate(templateId, teamName, capabilities);
+      return { success: true, ...result };
+    } catch (error) {
+      return { success: false, error: error instanceof Error ? error.message : String(error) };
     }
   });
 }

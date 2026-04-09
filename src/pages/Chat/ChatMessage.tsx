@@ -28,6 +28,7 @@ interface ChatMessageProps {
     summary?: string;
   }>;
   autoExpandThinking?: boolean;
+  agentAvatar?: string | null;
 }
 
 interface ExtractedImage { url?: string; data?: string; mimeType: string; }
@@ -45,6 +46,7 @@ export const ChatMessage = memo(function ChatMessage({
   isStreaming = false,
   streamingTools = [],
   autoExpandThinking = false,
+  agentAvatar,
 }: ChatMessageProps) {
   const isUser = message.role === 'user';
   const role = typeof message.role === 'string' ? message.role.toLowerCase() : '';
@@ -149,12 +151,21 @@ export const ChatMessage = memo(function ChatMessage({
     >
       {/* Avatar */}
       {!isUser && (
-        <div
-          data-testid="chat-avatar-assistant"
-          className="mt-1.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-clawcorp-ac text-white shadow-[0_2px_8px_rgba(0,122,255,0.3)]"
-        >
-          <Sparkles className="h-3.5 w-3.5" />
-        </div>
+        agentAvatar ? (
+          <img
+            data-testid="chat-avatar-assistant"
+            src={agentAvatar}
+            alt=""
+            className="mt-1.5 h-7 w-7 shrink-0 rounded-lg object-cover shadow-[0_2px_8px_rgba(0,0,0,0.1)]"
+          />
+        ) : (
+          <div
+            data-testid="chat-avatar-assistant"
+            className="mt-1.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-clawcorp-ac text-white shadow-[0_2px_8px_rgba(0,122,255,0.3)]"
+          >
+            <Sparkles className="h-3.5 w-3.5" />
+          </div>
+        )
       )}
 
       {/* Content */}

@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { hostApiFetch } from '@/lib/host-api';
 import type { ChannelType } from '@/types/channel';
-import type { AgentChatAccess, AgentSummary, AgentsSnapshot, AgentTeamRole } from '@/types/agent';
+import type { AgentChatAccess, AgentLifecycleStatus, AgentSummary, AgentsSnapshot, AgentTeamRole } from '@/types/agent';
 
 interface AgentsState {
   agents: AgentSummary[];
@@ -9,6 +9,8 @@ interface AgentsState {
   configuredChannelTypes: string[];
   channelOwners: Record<string, string>;
   agentStatuses: Record<string, 'online' | 'offline' | 'busy'>;
+  agentLifecycleStatuses: Record<string, AgentLifecycleStatus>;
+  agentSessionCounts: Record<string, number>;
   loading: boolean;
   error: string | null;
   fetchAgents: () => Promise<void>;
@@ -48,12 +50,24 @@ function applySnapshot(snapshot: AgentsSnapshot | undefined) {
   } : {};
 }
 
+function deriveLifecycleStatus(
+  status: 'online' | 'offline' | 'busy' | undefined,
+  _sessionCount: number
+): AgentLifecycleStatus {
+  if (status === 'offline') return 'maintenance';
+  if (status === 'busy') return 'training';
+  // Online agents (with or without sessions) are active — they've been hired/deployed
+  return 'active';
+}
+
 export const useAgentsStore = create<AgentsState>((set) => ({
   agents: [],
   defaultAgentId: 'main',
   configuredChannelTypes: [],
   channelOwners: {},
   agentStatuses: {},
+  agentLifecycleStatuses: {},
+  agentSessionCounts: {},
   loading: false,
   error: null,
 
@@ -66,14 +80,28 @@ export const useAgentsStore = create<AgentsState>((set) => ({
           ...applySnapshot(snapshot),
           loading: false,
         };
-        // Initialize agent statuses to online for all agents
         const statuses: Record<string, 'online' | 'offline' | 'busy'> = {};
+        const lifecycleStatuses: Record<string, AgentLifecycleStatus> = {};
+        const sessionCounts: Record<string, number> = {};
+        const agentsWithLifecycle: AgentSummary[] = [];
+
         for (const agent of newState.agents || []) {
-          statuses[agent.id] = state.agentStatuses[agent.id] || 'online';
+          const prevStatus = state.agentStatuses[agent.id] || 'online';
+          statuses[agent.id] = prevStatus;
+          sessionCounts[agent.id] = state.agentSessionCounts[agent.id] || 0;
+          lifecycleStatuses[agent.id] = deriveLifecycleStatus(
+            prevStatus,
+            sessionCounts[agent.id]
+          );
+          agentsWithLifecycle.push({ ...agent, lifecycleStatus: lifecycleStatuses[agent.id] });
         }
+
         return {
           ...newState,
+          agents: agentsWithLifecycle,
           agentStatuses: statuses,
+          agentLifecycleStatuses: lifecycleStatuses,
+          agentSessionCounts: sessionCounts,
         };
       });
     } catch (error) {
@@ -168,12 +196,25 @@ export const useAgentsStore = create<AgentsState>((set) => ({
   },
 
   updateAgentStatus: (agentId: string, status: 'online' | 'offline' | 'busy') => {
-    set((state) => ({
-      agentStatuses: {
-        ...state.agentStatuses,
-        [agentId]: status,
-      },
-    }));
+    set((state) => {
+      const agent = state.agents.find((a) => a.id === agentId);
+      const lifecycleStatus = agent
+        ? deriveLifecycleStatus(status, state.agentSessionCounts[agentId] || 0)
+        : state.agentLifecycleStatuses[agentId];
+      return {
+        agentStatuses: {
+          ...state.agentStatuses,
+          [agentId]: status,
+        },
+        agentLifecycleStatuses: {
+          ...state.agentLifecycleStatuses,
+          [agentId]: lifecycleStatus,
+        },
+        agents: state.agents.map((a) =>
+          a.id === agentId ? { ...a, lifecycleStatus } : a
+        ),
+      };
+    });
   },
 
   fetchAgentStatuses: async () => {

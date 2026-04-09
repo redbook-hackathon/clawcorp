@@ -6,7 +6,7 @@
  */
 import { useEffect, useMemo, useRef, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { AlertCircle, Loader2, Sparkles, FileText, Bot } from 'lucide-react';
+import { AlertCircle, Loader2, Sparkles, PanelRight, FileText, Bot } from 'lucide-react';
 import { useChatStore, type RawMessage } from '@/stores/chat';
 import { hostApiFetch } from '@/lib/host-api';
 import { toast } from 'sonner';
@@ -38,6 +38,7 @@ export function Chat() {
   const gatewayStatus = useGatewayStore((s) => s.status);
   const isGatewayRunning = gatewayStatus.state === 'running';
   const rightPanelMode = useSettingsStore((s) => s.rightPanelMode);
+  const setRightPanelMode = useSettingsStore((s) => s.setRightPanelMode);
   const openPanel = useRightPanelStore((s) => s.openPanel);
 
   const messages = useChatStore((s) => s.messages);
@@ -149,7 +150,7 @@ export function Chat() {
   const isEmpty = messages.length === 0 && !sending;
 
   const [extracting, setExtracting] = useState(false);
-  const _handleExtractMemory = useCallback(async () => {
+  const handleExtractMemory = useCallback(async () => {
     if (extracting || messages.length < 2) return;
     setExtracting(true);
     try {

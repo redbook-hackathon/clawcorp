@@ -1,127 +1,23 @@
-import { useEffect, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { hostApiFetch } from '@/lib/host-api';
-import { useSkillsStore } from '@/stores/skills';
-import type { AgentSummary } from '@/types/agent';
+import { useNavigate } from 'react-router-dom';
+import { useAgentSkillsToggle } from '@/hooks/use-agent-skills-toggle';
+import { Switch } from '@/components/ui/switch';
 import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
-
-type AssignedSkillsResponse = {
-  success: boolean;
-  skills: string[];
-};
-
-type SkillContentResponse = {
-  success: boolean;
-  content: string;
-  exists: boolean;
-};
+import type { AgentSummary } from '@/types/agent';
 
 export function MemberSkillsTab({ agent }: { agent: AgentSummary }) {
-  const navigate = useNavigate();
   const { t } = useTranslation('common');
-  const { skills, fetchSkills } = useSkillsStore();
-  const [assignedSkills, setAssignedSkills] = useState<string[]>([]);
-  const [selectedSkill, setSelectedSkill] = useState<string | null>(null);
-  const [assignableSkill, setAssignableSkill] = useState('');
-  const [skillContent, setSkillContent] = useState('');
-  const [loading, setLoading] = useState(true);
-
-  const availableSkills = useMemo(() => {
-    return skills.filter((skill) => {
-      const slug = skill.slug ?? skill.id;
-      return !assignedSkills.includes(slug);
-    });
-  }, [assignedSkills, skills]);
-
-  const loadAssignedSkills = async () => {
-    setLoading(true);
-    const response = await hostApiFetch<AssignedSkillsResponse>(
-      `/api/agents/${encodeURIComponent(agent.id)}/workspace/skills`,
-    );
-    const nextAssigned = response.success ? response.skills : [];
-    setAssignedSkills(nextAssigned);
-    setSelectedSkill((current) => current ?? nextAssigned[0] ?? null);
-    setAssignableSkill((current) => current || (nextAssigned[0] ? '' : (availableSkills[0]?.slug ?? availableSkills[0]?.id ?? '')));
-    setLoading(false);
-  };
-
-  useEffect(() => {
-    void fetchSkills();
-    void loadAssignedSkills();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [agent.id]);
-
-  useEffect(() => {
-    if (!selectedSkill) {
-      setSkillContent('');
-      return;
-    }
-
-    let cancelled = false;
-
-    const loadSkill = async () => {
-      const response = await hostApiFetch<SkillContentResponse>(
-        `/api/agents/${encodeURIComponent(agent.id)}/workspace/skills/${encodeURIComponent(selectedSkill)}`,
-      );
-      if (!cancelled) {
-        setSkillContent(response.content ?? '');
-      }
-    };
-
-    void loadSkill();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [agent.id, selectedSkill]);
-
-  useEffect(() => {
-    if (!assignableSkill && availableSkills.length > 0) {
-      setAssignableSkill(availableSkills[0]?.slug ?? availableSkills[0]?.id ?? '');
-    }
-  }, [assignableSkill, availableSkills]);
-
-  const handleAssign = async () => {
-    if (!assignableSkill) return;
-
-    await hostApiFetch(`/api/agents/${encodeURIComponent(agent.id)}/workspace/skills`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ slug: assignableSkill }),
-    });
-    await loadAssignedSkills();
-  };
-
-  const handleSave = async () => {
-    if (!selectedSkill) return;
-
-    await hostApiFetch(
-      `/api/agents/${encodeURIComponent(agent.id)}/workspace/skills/${encodeURIComponent(selectedSkill)}`,
-      {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ content: skillContent }),
-      },
-    );
-  };
-
-  const handleRemove = async () => {
-    if (!selectedSkill) return;
-
-    await hostApiFetch(
-      `/api/agents/${encodeURIComponent(agent.id)}/workspace/skills/${encodeURIComponent(selectedSkill)}`,
-      {
-        method: 'DELETE',
-      },
-    );
-
-    const removedSkill = selectedSkill;
-    setAssignedSkills((current) => current.filter((skill) => skill !== removedSkill));
-    setSelectedSkill((current) => (current === removedSkill ? null : current));
-    setSkillContent('');
-  };
+  const navigate = useNavigate();
+  const {
+    skills,
+    loading,
+    togglingSkills,
+    selectedSkill,
+    skillContent,
+    skillLoading,
+    toggleSkill,
+    selectSkill,
+  } = useAgentSkillsToggle(agent.id);
 
   if (loading) {
     return <div className="text-sm text-slate-500">{t('status.loading')}</div>;
@@ -130,79 +26,53 @@ export function MemberSkillsTab({ agent }: { agent: AgentSummary }) {
   if (skills.length === 0) {
     return (
       <div className="space-y-4 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-6 text-sm text-slate-600">
-        <p>{t('teamMap.skills.empty', { defaultValue: 'No skills assigned' })}</p>
+        <p>{t('skills.noInstalled')}</p>
         <Button type="button" variant="outline" onClick={() => navigate('/settings?section=skills-mcp')}>
-          {t('teamMap.skills.openSkillsPage', { defaultValue: 'Open Skills Page' })}
+          {t('skills.openSettings')}
         </Button>
       </div>
     );
   }
 
   return (
-    <div className="grid gap-4 md:grid-cols-[160px_minmax(0,1fr)]">
-      <div className="space-y-3">
-        <label className="block text-xs font-semibold uppercase tracking-wider text-slate-500">
-          Assign Skill
-          <select
-            aria-label="Assign Skill"
-            className="mt-2 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm"
-            value={assignableSkill}
-            onChange={(event) => setAssignableSkill(event.target.value)}
+    <div className="space-y-1">
+      {skills.map((skill) => (
+        <div
+          key={skill.slug}
+          className="flex items-center justify-between gap-3 rounded-xl border border-slate-100 px-4 py-3 transition-colors hover:bg-slate-50"
+        >
+          <button
+            type="button"
+            className={`min-w-0 flex-1 text-left text-[13px] font-medium ${selectedSkill === skill.slug ? 'text-blue-600' : 'text-slate-900 hover:text-blue-600'}`}
+            onClick={() => selectSkill(selectedSkill === skill.slug ? null : skill.slug)}
           >
-            {availableSkills.map((skill) => (
-              <option key={skill.slug ?? skill.id} value={skill.slug ?? skill.id}>
-                {skill.name}
-              </option>
-            ))}
-          </select>
-        </label>
+            <span className="mr-2">{skill.icon}</span>
+            {skill.name}
+            {skill.description ? (
+              <span className="ml-2 text-[12px] font-normal text-slate-400">{skill.description}</span>
+            ) : null}
+          </button>
+          <Switch
+            checked={skill.isAssigned}
+            disabled={!!togglingSkills[skill.slug]}
+            onCheckedChange={(checked) => void toggleSkill(skill.slug, checked)}
+          />
+        </div>
+      ))}
 
-        <Button type="button" onClick={() => void handleAssign()} disabled={!assignableSkill}>
-          {t('teamMap.skills.assign', { defaultValue: 'Assign Skill' })}
-        </Button>
-
-        <div className="space-y-2">
-          {assignedSkills.length === 0 ? (
-            <p className="text-sm text-slate-500">
-              {t('teamMap.skills.empty', { defaultValue: 'No skills assigned' })}
-            </p>
+      {selectedSkill ? (
+        <div className="mt-3 rounded-xl border border-slate-200 bg-slate-50 p-4">
+          {skillLoading ? (
+            <div className="flex items-center justify-center py-4">
+              <span className="h-4 w-4 animate-spin rounded-full border-2 border-blue-600 border-t-transparent" />
+            </div>
           ) : (
-            assignedSkills.map((skill) => (
-              <button
-                key={skill}
-                type="button"
-                className={`w-full rounded-xl border px-3 py-2 text-left text-sm ${selectedSkill === skill ? 'border-blue-500 bg-blue-50' : 'border-slate-200 bg-white'}`}
-                onClick={() => setSelectedSkill(skill)}
-              >
-                {skill}
-              </button>
-            ))
+            <pre className="max-h-[320px] overflow-y-auto whitespace-pre-wrap text-xs font-mono text-slate-700">
+              {skillContent || '(empty)'}
+            </pre>
           )}
         </div>
-      </div>
-
-      <div className="space-y-3">
-        {selectedSkill ? (
-          <>
-            <Textarea value={skillContent} onChange={(event) => setSkillContent(event.target.value)} className="min-h-[220px]" />
-            <div className="flex gap-3">
-              <Button type="button" onClick={() => void handleSave()}>
-                Save Skill
-              </Button>
-              <Button type="button" variant="destructive" onClick={() => void handleRemove()}>
-                Remove Skill
-              </Button>
-            </div>
-          </>
-        ) : (
-          <div className="space-y-4 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-6 text-sm text-slate-600">
-            <p>{t('teamMap.skills.empty', { defaultValue: 'No skills assigned' })}</p>
-            <Button type="button" variant="outline" onClick={() => navigate('/settings?section=skills-mcp')}>
-              {t('teamMap.skills.openSkillsPage', { defaultValue: 'Open Skills Page' })}
-            </Button>
-          </div>
-        )}
-      </div>
+      ) : null}
     </div>
   );
 }

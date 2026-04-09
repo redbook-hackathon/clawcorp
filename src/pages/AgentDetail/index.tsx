@@ -12,6 +12,7 @@ import { AgentDetailHero } from '@/components/agents/detail/AgentDetailHero';
 import { AgentDetailTabs, type AgentDetailTabId } from '@/components/agents/detail/AgentDetailTabs';
 import { AgentMemoryTab } from '@/components/agents/detail/AgentMemoryTab';
 import { AgentActivityTab } from '@/components/agents/detail/AgentActivityTab';
+import { AgentSkillsTab } from '@/components/agents/detail/AgentSkillsTab';
 import { buildAgentTaskSummaryMap } from '@/lib/task-summary-read-model';
 import { toast } from 'sonner';
 
@@ -358,87 +359,6 @@ function CronSection({ agentId }: CronSectionProps) {
   );
 }
 
-function SkillsPanel({ agentId }: { agentId: string }) {
-  const { t } = useTranslation('agents');
-  const [skills, setSkills] = useState<string[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [selectedSkill, setSelectedSkill] = useState<string | null>(null);
-  const [skillContent, setSkillContent] = useState<string>('');
-  const [skillLoading, setSkillLoading] = useState(false);
-
-  useEffect(() => {
-    setLoading(true);
-    setSelectedSkill(null);
-    setSkillContent('');
-    hostApiFetch<{ success: boolean; skills: string[] }>(
-      `/api/agents/${encodeURIComponent(agentId)}/workspace/skills`,
-    )
-      .then((result) => {
-        setSkills(result.success ? result.skills : []);
-      })
-      .catch(() => setSkills([]))
-      .finally(() => setLoading(false));
-  }, [agentId]);
-
-  const loadSkill = async (skillName: string) => {
-    setSelectedSkill(skillName);
-    setSkillLoading(true);
-    try {
-      const response = await hostApiFetch<{ success: boolean; content: string; exists: boolean }>(
-        `/api/agents/${encodeURIComponent(agentId)}/workspace/skills/${encodeURIComponent(skillName)}`,
-      );
-      setSkillContent(response.content ?? '');
-    } catch {
-      setSkillContent('');
-    } finally {
-      setSkillLoading(false);
-    }
-  };
-
-  return (
-    <div className="rounded-[24px] border border-slate-200/80 bg-white p-6 shadow-sm">
-      <h2 className="text-[18px] font-semibold text-slate-900">
-        {t('detail.skills', { defaultValue: 'Skills' })}
-      </h2>
-      {loading ? <p className="mt-4 text-[13px] text-slate-400">Loading skills...</p> : null}
-      {!loading && skills.length === 0 ? (
-        <p className="mt-4 text-[13px] text-slate-400">
-          {t('detail.noSkills', { defaultValue: 'No skills configured.' })}
-        </p>
-      ) : null}
-      {!loading && skills.length > 0 ? (
-        <div className="mt-4 space-y-3">
-          <div className="flex flex-wrap gap-2">
-            {skills.map((skill) => (
-              <button
-                key={skill}
-                type="button"
-                onClick={() => void loadSkill(skill)}
-                className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
-                  selectedSkill === skill ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-                }`}
-              >
-                {skill}
-              </button>
-            ))}
-          </div>
-          {selectedSkill ? (
-            <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
-              {skillLoading ? (
-                <p className="text-xs text-slate-400">Loading...</p>
-              ) : (
-                <pre className="whitespace-pre-wrap text-xs font-mono text-slate-700">
-                  {skillContent || '(empty)'}
-                </pre>
-              )}
-            </div>
-          ) : null}
-        </div>
-      ) : null}
-    </div>
-  );
-}
-
 export function AgentDetail() {
   const { t } = useTranslation('agents');
   const navigate = useNavigate();
@@ -749,7 +669,7 @@ export function AgentDetail() {
       ) : null}
 
       {activeTab === 'memory' ? <AgentMemoryTab agent={agent as AgentSummary} /> : null}
-      {activeTab === 'skills' ? <SkillsPanel agentId={agent.id} /> : null}
+      {activeTab === 'skills' ? <AgentSkillsTab agentId={agent.id} /> : null}
       {activeTab === 'activity' ? (
         <AgentActivityTab
           statusLabel={statusLabel}

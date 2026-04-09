@@ -30,9 +30,11 @@
         "newSession": "新建会话",
         "toggleSidebar": "切换侧边栏",
         "taskBoard": "任务看板",
+        "marketplace": "人才市集",
         "taskSchedule": "任务日程",
         "memoryKnowledge": "记忆知识库",
         "costUsage": "费用用量",
+        "humanAssets": "人力资产",
         "teamOverview": "团队总览",
         "teamMap": "团队地图",
         "profile": "个人资料",
@@ -471,6 +473,32 @@
             "idle": "空闲",
             "blocked": "阻塞"
         },
+        "humanAssets": {
+            "title": "人力资产",
+            "subtitle": "管理您的数字员工团队及其全生命周期状态",
+            "localImport": "本地导入",
+            "buildEmployee": "自建员工",
+            "statusActive": "服役中",
+            "statusTraining": "训练中",
+            "statusMaintenance": "待维护",
+            "statusOnboarding": "待上岗",
+            "statusRetired": "已退役",
+            "activeWorkforce": "在岗运力",
+            "dailyWorkload": "今日任务负载",
+            "resourceConsumption": "综合消耗评估",
+            "viewProfile": "查看档案",
+            "runLogs": "运行日志",
+            "configEdit": "配置修改",
+            "assignTask": "指派任务",
+            "deleteEmployee": "删除/退货",
+            "sourceMarketplace": "市场雇佣",
+            "sourceLocal": "本地导入",
+            "sourceCustom": "自定义",
+            "team": "团队",
+            "employee": "员工",
+            "members": "名成员",
+            "leader": "负责人"
+        },
         "entrypoints": {
             "title": "对外入口",
             "unassigned": "未分配"
@@ -622,7 +650,62 @@
             "outputPlaceholder": "runtime 回传进展后，会在这里显示最近输出摘要。",
             "childRuntime": "子 runtime 详情",
             "childRuntimePlaceholder": "当前成员还没有可显示的子 runtime 详情。"
+        },
+        "memberDetail": {
+            "description": "在当前团队地图中管理此成员。",
+            "openChat": "打开对话",
+            "removeFromTeam": "移出团队",
+            "removeConfirm": "确定要将 {{name}} 从当前团队移除吗？这不会删除该 Agent。",
+            "role": "角色",
+            "chatAccess": "对话权限",
+            "responsibility": "职责",
+            "team": "团队",
+            "ownedEntryPoints": "归属入口",
+            "none": "—"
+        },
+        "memory": {
+            "empty": "暂无记忆",
+            "saving": "保存中...",
+            "synced": "已同步",
+            "error": "同步失败，请重试",
+            "previewHint": "切换预览以查看渲染后的记忆内容。",
+            "showPreview": "显示预览",
+            "hidePreview": "隐藏预览"
+        },
+        "activity": {
+            "noActiveWork": "暂无进行中的工作",
+            "status": "状态",
+            "currentWork": "当前工作",
+            "blockingReason": "阻塞原因",
+            "nextStep": "建议下一步",
+            "agentLabel": "Agent: {{name}}"
         }
+    },
+    "marketplace": {
+        "title": "人才市集",
+        "subtitle": "发现并雇佣全球最顶尖的数字员工",
+        "searchPlaceholder": "搜索 Agent...",
+        "priceLabel": "部署费用",
+        "empty": "没有找到匹配的 Agent",
+        "clearFilters": "清除筛选",
+        "listEmployee": "上架我的员工",
+        "allTypes": "全部类型",
+        "hireCompany": "雇佣团队",
+        "hireEmployee": "雇佣员工",
+        "hireCompanyHint": "雇佣团队 = SOP 工作流 · 雇佣员工 = 单个 Agent",
+        "hiredCount": "已雇佣",
+        "listTitle": "上架我的员工",
+        "listSubtitle": "将你的 Agent 发布到市集，让更多团队发现和雇佣",
+        "agentName": "Agent 名称",
+        "agentNamePlaceholder": "给你的 Agent 取个名字",
+        "agentType": "上架类型",
+        "typeCompany": "团队 (SOP 工作流)",
+        "typeEmployee": "员工 (单个 Agent)",
+        "agentDesc": "简介",
+        "agentDescPlaceholder": "描述你的 Agent 能做什么...",
+        "agentPrice": "定价",
+        "agentPricePlaceholder": "例如 $29/月 或 免费",
+        "submitListing": "提交上架"
     },
     "teamBrief": {
         "title": "团队简报",
@@ -635,6 +718,13 @@
         "noBlockers": "当前没有等待 Leader 处理的阻塞项。",
         "noNextSteps": "当前没有新增的后续动作。",
         "openMember": "打开成员",
-        "openKanban": "打开看板"
+        "openKanban": "打���看板"
+    },
+    "skills": {
+        "title": "技能",
+        "noInstalled": "尚未安装技能，请在设置页面安装。",
+        "openSettings": "打开技能设置",
+        "assignFailed": "分配技能失败",
+        "removeFailed": "移除技能失败"
     }
 }

@@ -137,6 +137,14 @@ const electronAPI = {
         'openclaw:getConfigDir',
         'openclaw:getSkillsDir',
         'openclaw:getCliCommand',
+        // Workspace
+        'workspace:clone',
+        'workspace:import',
+        'workspace:hireTeam',
+        // Marketplace
+        'marketplace:listTemplates',
+        'marketplace:hireSingle',
+        'marketplace:hireTeam',
       ];
 
       if (validChannels.includes(channel)) {

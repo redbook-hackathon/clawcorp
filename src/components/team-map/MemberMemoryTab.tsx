@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
 import { Bold, Italic, Link2, List } from 'lucide-react';
-import { getMemoryOverview, reindexMemory, saveMemoryFile } from '@/lib/memory-client';
+import { getMemoryOverview, saveMemoryFile } from '@/lib/memory-client';
 import type { AgentSummary } from '@/types/agent';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -20,10 +20,21 @@ type MemoryApiResponse = {
 
 const AUTOSAVE_DELAY_MS = 1500;
 
+function getErrorMessage(error: unknown): string {
+  if (error instanceof Error) return error.message;
+  if (typeof error === 'string') return error;
+  try {
+    return JSON.stringify(error);
+  } catch {
+    return 'Unknown error';
+  }
+}
+
 export function MemberMemoryTab({ agent }: { agent: AgentSummary }) {
   const { t } = useTranslation('common');
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [draft, setDraft] = useState('');
   const [savedContent, setSavedContent] = useState('');
   const [expectedMtime, setExpectedMtime] = useState<string | undefined>(undefined);
@@ -35,6 +46,7 @@ export function MemberMemoryTab({ agent }: { agent: AgentSummary }) {
 
     const loadMemory = async () => {
       setLoading(true);
+      setLoadError(null);
       try {
         const response = await getMemoryOverview({ scope: agent.id }) as MemoryApiResponse;
         const memoryFile = response.files.find((file) => file.relativePath === 'MEMORY.md');
@@ -49,10 +61,9 @@ export function MemberMemoryTab({ agent }: { agent: AgentSummary }) {
         }
       } catch (error) {
         if (!cancelled) {
-          setStatusText(
-            t('teamMap.memory.error', { defaultValue: 'Could not sync. Retry.' }),
-          );
-          toast.error(String(error));
+          const msg = getErrorMessage(error);
+          setLoadError(msg);
+          setStatusText(t('teamMap.memory.error'));
         }
       } finally {
         if (!cancelled) {
@@ -66,12 +77,12 @@ export function MemberMemoryTab({ agent }: { agent: AgentSummary }) {
     return () => {
       cancelled = true;
     };
-  }, [agent.id]);
+  }, [agent.id, t]);
 
   useEffect(() => {
-    if (loading || draft === savedContent) return;
+    if (loading || loadError || draft === savedContent) return;
 
-    setStatusText(t('teamMap.memory.saving', { defaultValue: 'Saving...' }));
+    setStatusText(t('teamMap.memory.saving'));
 
     const timeoutId = window.setTimeout(async () => {
       try {
@@ -81,20 +92,19 @@ export function MemberMemoryTab({ agent }: { agent: AgentSummary }) {
           scope: agent.id,
           expectedMtime,
         });
-        await reindexMemory();
         setSavedContent(draft);
-        setStatusText(t('teamMap.memory.synced', { defaultValue: 'Synced' }));
-        toast.success(t('teamMap.memory.synced', { defaultValue: 'Synced' }));
+        setStatusText(t('teamMap.memory.synced'));
       } catch (error) {
-        setStatusText(t('teamMap.memory.error', { defaultValue: 'Could not sync. Retry.' }));
-        toast.error(String(error));
+        const msg = getErrorMessage(error);
+        setStatusText(t('teamMap.memory.error'));
+        toast.error(msg);
       }
     }, AUTOSAVE_DELAY_MS);
 
     return () => {
       window.clearTimeout(timeoutId);
     };
-  }, [agent.id, draft, expectedMtime, loading, savedContent]);
+  }, [agent.id, draft, expectedMtime, loading, loadError, savedContent, t]);
 
   const applyFormat = (prefix: string, suffix = '') => {
     const textarea = textareaRef.current;
@@ -106,6 +116,26 @@ export function MemberMemoryTab({ agent }: { agent: AgentSummary }) {
     const nextValue = `${draft.slice(0, start)}${prefix}${selected}${suffix}${draft.slice(end)}`;
     setDraft(nextValue);
   };
+
+  if (loadError && loading) {
+    return (
+      <div className="space-y-3 rounded-2xl border border-red-200 bg-red-50 px-4 py-5 text-sm text-red-700">
+        <p className="font-medium">{t('teamMap.memory.error')}</p>
+        <p className="text-xs text-red-500">{loadError}</p>
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          onClick={() => {
+            setLoadError(null);
+            setLoading(true);
+          }}
+        >
+          Retry
+        </Button>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-4">
@@ -127,7 +157,7 @@ export function MemberMemoryTab({ agent }: { agent: AgentSummary }) {
           Link
         </Button>
         <Button type="button" variant="ghost" size="sm" onClick={() => setPreviewOpen((value) => !value)}>
-          {previewOpen ? 'Hide Preview' : 'Show Preview'}
+          {previewOpen ? t('teamMap.memory.hidePreview') : t('teamMap.memory.showPreview')}
         </Button>
         <span className="ml-auto text-xs font-medium text-slate-500">{statusText}</span>
       </div>
@@ -143,18 +173,16 @@ export function MemberMemoryTab({ agent }: { agent: AgentSummary }) {
             value={draft}
             onChange={(event) => setDraft(event.target.value)}
             className="min-h-[240px]"
-            placeholder={t('teamMap.memory.empty', { defaultValue: 'No memory yet' })}
+            placeholder={t('teamMap.memory.empty')}
           />
 
           {previewOpen ? (
             <div className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4 text-sm text-slate-700">
-              <pre className="whitespace-pre-wrap font-sans">{draft || t('teamMap.memory.empty', { defaultValue: 'No memory yet' })}</pre>
+              <pre className="whitespace-pre-wrap font-sans">{draft || t('teamMap.memory.empty')}</pre>
             </div>
           ) : (
             <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-4 py-6 text-sm text-slate-500">
-              {t('teamMap.memory.previewHint', {
-                defaultValue: 'Toggle preview to inspect the rendered memory content.',
-              })}
+              {t('teamMap.memory.previewHint')}
             </div>
           )}
         </div>

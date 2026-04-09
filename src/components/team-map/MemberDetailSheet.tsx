@@ -51,58 +51,56 @@ export function MemberDetailSheet({
   return (
     <>
       <Sheet open={open} onOpenChange={onOpenChange}>
-        <SheetContent side="right" className="w-full sm:max-w-[520px]">
+        <SheetContent side="right" className="flex w-full flex-col sm:max-w-[520px]">
           <SheetHeader>
             <SheetTitle>{agent.name}</SheetTitle>
             <SheetDescription>
-              {t('teamMap.memberDetail.description', {
-                defaultValue: 'Manage this team member from the current team map.',
-              })}
+              {t('teamMap.memberDetail.description')}
             </SheetDescription>
           </SheetHeader>
 
-          <div className="mt-6">
+          <div className="mt-6 min-h-0 flex-1 overflow-y-auto">
             <Tabs defaultValue="overview">
               <TabsList className="grid w-full grid-cols-4">
-                <TabsTrigger value="overview">Overview</TabsTrigger>
+                <TabsTrigger value="overview">{t('teamMap.drawer.profilePolicy')}</TabsTrigger>
                 <TabsTrigger value="memory">Memory</TabsTrigger>
-                <TabsTrigger value="skills">Skills</TabsTrigger>
-                <TabsTrigger value="activity">Activity</TabsTrigger>
+                <TabsTrigger value="skills">{t('skills.title')}</TabsTrigger>
+                <TabsTrigger value="activity">{t('teamMap.rail.runtimeWork')}</TabsTrigger>
               </TabsList>
 
               <TabsContent value="overview" className="space-y-4 pt-4">
                 <div className="flex flex-wrap gap-3">
                   <Button type="button" onClick={() => onOpenChat(agent)}>
-                    {t('teamMap.memberDetail.openChat', { defaultValue: 'Open Chat' })}
+                    {t('teamMap.memberDetail.openChat')}
                   </Button>
                   {!isLeader ? (
                     <Button type="button" variant="destructive" onClick={() => setConfirmOpen(true)}>
-                      {t('teamMap.memberDetail.removeFromTeam', { defaultValue: 'Remove from Team' })}
+                      {t('teamMap.memberDetail.removeFromTeam')}
                     </Button>
                   ) : null}
                 </div>
 
                 <div className="space-y-3 rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm">
                   <div className="flex items-center justify-between gap-4">
-                    <span className="text-slate-500">Role</span>
+                    <span className="text-slate-500">{t('teamMap.memberDetail.role')}</span>
                     <span className="font-medium text-slate-900">{agent.teamRole}</span>
                   </div>
                   <div className="flex items-center justify-between gap-4">
-                    <span className="text-slate-500">Chat Access</span>
+                    <span className="text-slate-500">{t('teamMap.memberDetail.chatAccess')}</span>
                     <span className="font-medium text-slate-900">{agent.chatAccess}</span>
                   </div>
                   <div className="flex items-center justify-between gap-4">
-                    <span className="text-slate-500">Responsibility</span>
-                    <span className="font-medium text-slate-900">{agent.responsibility || '—'}</span>
+                    <span className="text-slate-500">{t('teamMap.memberDetail.responsibility')}</span>
+                    <span className="font-medium text-slate-900">{agent.responsibility || t('teamMap.memberDetail.none')}</span>
                   </div>
                   <div className="flex items-center justify-between gap-4">
-                    <span className="text-slate-500">Team</span>
+                    <span className="text-slate-500">{t('teamMap.memberDetail.team')}</span>
                     <span className="font-medium text-slate-900">{teamId}</span>
                   </div>
                   <div className="flex items-center justify-between gap-4">
-                    <span className="text-slate-500">Owned Entry Points</span>
+                    <span className="text-slate-500">{t('teamMap.memberDetail.ownedEntryPoints')}</span>
                     <span className="font-medium text-slate-900">
-                      {ownedEntryPoints.length > 0 ? ownedEntryPoints.join(', ') : '—'}
+                      {ownedEntryPoints.length > 0 ? ownedEntryPoints.join(', ') : t('teamMap.memberDetail.none')}
                     </span>
                   </div>
                 </div>
@@ -132,11 +130,9 @@ export function MemberDetailSheet({
 
       <ConfirmDialog
         open={confirmOpen}
-        title={t('teamMap.memberDetail.removeFromTeam', { defaultValue: 'Remove from Team' })}
-        message={t('teamMap.memberDetail.removeConfirm', {
-          defaultValue: `Are you sure you want to remove ${agent.name} from this team? This does not delete the agent.`,
-        })}
-        confirmLabel={t('teamMap.memberDetail.removeFromTeam', { defaultValue: 'Remove from Team' })}
+        title={t('teamMap.memberDetail.removeFromTeam')}
+        message={t('teamMap.memberDetail.removeConfirm', { name: agent.name })}
+        confirmLabel={t('teamMap.memberDetail.removeFromTeam')}
         cancelLabel={t('actions.cancel', { defaultValue: 'Cancel' })}
         variant="destructive"
         onCancel={() => setConfirmOpen(false)}

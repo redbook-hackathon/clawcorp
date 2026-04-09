@@ -16,7 +16,7 @@ export function MainLayout() {
       {/* Below the title bar: sidebar + content */}
       <div className="flex flex-1 overflow-hidden">
         <Sidebar />
-        <main className="flex-1 overflow-hidden bg-white dark:bg-background">
+        <main className="flex-1 overflow-y-auto bg-white dark:bg-background">
           <Outlet />
         </main>
         <RightPanel />

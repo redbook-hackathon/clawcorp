@@ -21,12 +21,12 @@ export function MemberActivityTab({
   return (
     <div className="space-y-4 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-5 text-sm text-slate-700">
       <div className="flex items-center justify-between gap-4">
-        <span className="text-slate-500">Status</span>
+        <span className="text-slate-500">{t('teamMap.activity.status')}</span>
         <span className="font-medium text-slate-900">{statusLabel}</span>
       </div>
 
       <div className="space-y-2">
-        <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">Current Work</p>
+        <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">{t('teamMap.activity.currentWork')}</p>
         {currentWorkTitles.length > 0 ? (
           currentWorkTitles.map((title) => (
             <div key={title} className="rounded-xl border border-slate-200 bg-white px-3 py-2">
@@ -35,14 +35,14 @@ export function MemberActivityTab({
           ))
         ) : (
           <div className="rounded-xl border border-dashed border-slate-200 bg-white px-3 py-3 text-slate-500">
-            {t('teamMap.activity.noActiveWork', { defaultValue: 'No active work' })}
+            {t('teamMap.activity.noActiveWork')}
           </div>
         )}
       </div>
 
       {blockingReason ? (
         <div className="space-y-2">
-          <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">Blocking Reason</p>
+          <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">{t('teamMap.activity.blockingReason')}</p>
           <div className="rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-amber-900">
             {blockingReason}
           </div>
@@ -51,14 +51,14 @@ export function MemberActivityTab({
 
       {nextStep ? (
         <div className="space-y-2">
-          <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">Recommended Next Step</p>
+          <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">{t('teamMap.activity.nextStep')}</p>
           <div className="rounded-xl border border-slate-200 bg-white px-3 py-2">
             {nextStep}
           </div>
         </div>
       ) : null}
 
-      <p className="text-xs text-slate-400">Agent: {agent.name}</p>
+      <p className="text-xs text-slate-400">{t('teamMap.activity.agentLabel', { name: agent.name })}</p>
     </div>
   );
 }

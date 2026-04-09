@@ -1,4 +1,4 @@
-import { access, copyFile, mkdir, readFile, readdir, rm, writeFile } from 'fs/promises';
+import { access, copyFile, mkdir, readFile, readdir, rm } from 'fs/promises';
 import { constants } from 'fs';
 import { join, normalize } from 'path';
 import { listConfiguredChannels, readOpenClawConfig, writeOpenClawConfig } from './channel-config';
@@ -645,7 +645,6 @@ export async function createAgent(input: {
     };
 
     await provisionAgentFilesystem(config, newAgent);
-    await writeAgentSoulMd(newAgent);
     await writeOpenClawConfig(config);
     logger.info('Created agent config entry', { agentId: nextId });
     return {
@@ -740,7 +739,6 @@ export async function updateAgentProfile(
     };
 
     await writeOpenClawConfig(config);
-    await writeAgentSoulMd(updatedEntry);
     logger.info('Updated agent profile', { agentId, name: normalizedName, persona: normalizedPersona, model: updates.model });
     return buildSnapshotFromConfig(config);
   });
@@ -855,65 +853,4 @@ export async function clearAllBindingsForChannel(channelType: string): Promise<v
     await writeOpenClawConfig(config);
     logger.info('Cleared all bindings for channel', { channelType });
   });
-}
-
-export async function writeAgentSoulMd(agent: {
-  id: string;
-  name?: string;
-  persona?: string;
-  responsibility?: string;
-  workspace?: string;
-  teamRole?: AgentTeamRole;
-  reportsTo?: string | null;
-  /** When provided, appends a team-context block (leader member list etc.) */
-  teamContextOverride?: string;
-}): Promise<void> {
-  // Main agent: only write when explicit team context is provided
-  if (agent.id === MAIN_AGENT_ID && !agent.teamContextOverride) return;
-
-  const workspacePath = expandPath(
-    agent.workspace || `~/.openclaw/workspace-${agent.id}`
-  );
-  await ensureDir(workspacePath);
-
-  const lines: string[] = [];
-  const name = agent.name || agent.id;
-
-  // 标题
-  lines.push(`# ${name}`, '');
-
-  // Persona (人设)
-  if (agent.persona) {
-    lines.push(agent.persona, '');
-  }
-
-  // 职责
-  if (agent.responsibility) {
-    lines.push('## 职责', '', agent.responsibility, '');
-  }
-
-  // 团队角色
-  if (agent.teamRole) {
-    lines.push('## 团队角色', '');
-    lines.push(
-      agent.teamRole === 'leader'
-        ? '你是团队 Leader，负责协调团队成员、分配任务、汇总结果。'
-        : '你是团队成员（Worker），专注于执行分配给你的任务，向 Leader 汇报结果。'
-    );
-    lines.push('');
-  }
-
-  // Team context override (used for leader SOUL.md with member list)
-  if (agent.teamContextOverride) {
-    lines.push(agent.teamContextOverride, '');
-  }
-
-  // 如果没有 persona 也没有 responsibility，给一个最基本的描述
-  if (!agent.persona && !agent.responsibility && !agent.teamContextOverride) {
-    lines.push(`你是 ${name}，一个数字员工。`, '');
-  }
-
-  const content = lines.join('\n');
-  const soulPath = join(workspacePath, 'SOUL.md');
-  await writeFile(soulPath, content, 'utf-8');
 }

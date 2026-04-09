@@ -20,6 +20,15 @@
   English | <a href="README.zh-CN.md">简体中文</a>
 </p>
 
+<p align="center">
+  <a href="https://clawcorp.top/#waitlist" target="_blank">
+    <img src="https://img.shields.io/badge/-Join%20Waitlist-5462eb?style=for-the-badge&logoColor=%23f5f5f5" alt="Join Waitlist" />
+  </a>
+  <a href="https://clawcorp.top" target="_blank">
+    <img src="https://img.shields.io/badge/-Landing%20Page-5462eb?style=for-the-badge&logoColor=%23f5f5f5" alt="Landing Page" />
+  </a>
+</p>
+
 ---
 
 ## Overview

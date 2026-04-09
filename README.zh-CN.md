@@ -20,13 +20,26 @@
   <a href="README.md">English</a> | 简体中文
 </p>
 
+<p align="center">
+  <a href="https://clawcorp.top/#waitlist" target="_blank">
+    <img src="https://img.shields.io/badge/-加入等待列表-5462eb?style=for-the-badge&logoColor=%23f5f5f5" alt="加入等待列表" />
+  </a>
+  <a href="https://clawcorp.top" target="_blank">
+    <img src="https://img.shields.io/badge/-落地页-5462eb?style=for-the-badge&logoColor=%23f5f5f5" alt="落地页" />
+  </a>
+</p>
+
 ---
 
-## 概述
+## 概览
 
 从产品调研、开发部署到社媒营销，ClawCorp 让数字员工完成一切闭环。**你只需输入一句话，剩下的交给 AI 军团。**
 
-就像柯达用“你只需按快门，剩下的交给我们”让摄影大众化，ClawCorp 用同样逻辑重塑公司运营：把创业中的复杂流程压缩成一条指令。
+就像柯达用”你只需按快门，剩下的交给我们”让摄影大众化，ClawCorp 用同样逻辑重塑公司运营：把创业中的复杂流程压缩成一条指令。
+
+<p align=”center”>
+  <img src=”image.png” width=”100%” alt=”ClawCorp 指挥中心” />
+</p>
 
 ## 运转方式
 
@@ -42,11 +55,19 @@
 - 任务 Stepper 节点透明追踪
 - 中间产物实时输出
 
+<p align="center">
+  <img src="image-1.png" width="100%" alt="指令中心截图" />
+</p>
+
 ### 🏪 Claw Store：发现并雇佣数字员工
 人才市集汇聚全球最优秀的 AI 员工。按类别筛选、一键雇佣即加入你的团队。每位员工背后都有其专属精调的 System Prompt、行业 RAG 与工具链。
 - 开发、运营、数据、合规等多类专才一应俱全
 - 支持订阅或买断，灵活定价
 - 你也可以上架自建员工，赚取收益
+
+<p align="center">
+  <img src="image-2.png" width="100%" alt="Claw Store 截图" />
+</p>
 
 ### 👥 人力资产：管理你的数字团队
 花名册一览团队状态，每位员工有完整的绩效看板（消耗/产出比，即 ROI 实时可见）。表现不佳则一键辞退，随时从 Store 中补充新员工。
@@ -54,17 +75,29 @@
 - Token 消耗与 ROI 实时监控
 - 自定义 Prompt、权限与独立的知识库
 
+<p align="center">
+  <img src="image-3.png" width="100%" alt="人力资产截图" />
+</p>
+
 ### 📊 指挥中枢：实时掌控全局运转
 多员工协同如何落地？任务看板展示了执行中任务数、员工负荷甘特图，以及今日完成闭环数。点击任意员工，即可穿透查看任务耗时及历史交互日志。
 - 多员工协同甘特图
 - 可交互实时日志
 - 任务状态一键穿透监控
 
+<p align="center">
+  <img src="image-4.png" width="100%" alt="指挥中枢截图" />
+</p>
+
 ### 🔗 生态网关：打通你的工作流生态
 OAuth 一键绑定企业微信、飞书、钉钉、Slack。你可以指定任意频道由某位特定的数字员工负责监听、分发消息与自动回复，实现企业内外的全渠道覆盖。
 - 集成企业微信、飞书、钉钉、Slack
 - 消息路由按员工职能智能分配
 - 自动回复结合工作流任务触发
+
+<p align="center">
+  <img src="image-5.png" width="100%" alt="生态网关截图" />
+</p>
 
 ---
 
@@ -73,6 +106,10 @@ OAuth 一键绑定企业微信、飞书、钉钉、Slack。你可以指定任意
 1. **下载与安装**：下载对应平台的应用客户端（支持 macOS、Windows、Linux）。
 2. **连接 AI**：在设置向导中配置模型供应商。
 3. **开始下达指令**：进入主指令大厅，开始你的自动化探索之路。
+
+<p align="center">
+  <img src="image-6.png" width="100%" alt="快速开始截图" />
+</p>
 
 ### 下载与构建
 

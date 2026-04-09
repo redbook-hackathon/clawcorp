@@ -567,30 +567,42 @@ async function readTemplateAvatar(agentId: string): Promise<string | undefined> 
 export async function listAgentsSnapshot(): Promise<AgentsSnapshot> {
   const config = await readOpenClawConfig() as AgentConfigDocument;
 
-  // Backfill avatars for agent entries that don't have one persisted
+  // Strip avatar fields from config before passing to openclaw — the base64
+  // blobs bloat openclaw.json and cause config validation failures on older
+  // openclaw versions that don't recognise the "avatar" key.
   const agentsConfig = config.agents as Record<string, unknown> | undefined;
   const agentList = Array.isArray(agentsConfig?.list)
     ? (agentsConfig!.list as Array<Record<string, unknown>>)
     : [];
   let configDirty = false;
   for (const entry of agentList) {
-    if (entry.id && !entry.avatar) {
-      const avatar = await readTemplateAvatar(entry.id as string);
-      if (avatar) {
-        entry.avatar = avatar;
-        configDirty = true;
-      }
+    if ('avatar' in entry) {
+      delete entry.avatar;
+      configDirty = true;
     }
   }
   if (configDirty) {
     try {
       await writeOpenClawConfig(config);
     } catch {
-      // non-critical — avatar backfill is best-effort
+      // non-critical
     }
   }
 
-  return buildSnapshotFromConfig(config);
+  const snapshot = buildSnapshotFromConfig(config);
+
+  // Inject avatars in-memory from template files (not persisted to openclaw.json)
+  const agents = snapshot.agents;
+  for (let i = 0; i < agents.length; i++) {
+    if (!agents[i].avatar) {
+      const avatar = await readTemplateAvatar(agents[i].id);
+      if (avatar) {
+        agents[i] = { ...agents[i], avatar };
+      }
+    }
+  }
+
+  return { ...snapshot, agents };
 }
 
 export async function listConfiguredAgentIds(): Promise<string[]> {

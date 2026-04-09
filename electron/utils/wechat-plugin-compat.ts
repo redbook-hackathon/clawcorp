@@ -137,6 +137,7 @@ export function patchFeishuPluginCompatibilitySource(source: string): string {
 
 export function patchInstalledFeishuPluginCompatibility(pluginRoot: string): boolean {
   const candidateFiles = [
+    // @larksuite/openclaw-lark layout (src/core/accounts.js, src/channel/*.js)
     join(pluginRoot, 'src', 'core', 'accounts.js'),
     join(pluginRoot, 'src', 'core', 'accounts.ts'),
     join(pluginRoot, 'src', 'channel', 'config-adapter.js'),
@@ -145,6 +146,11 @@ export function patchInstalledFeishuPluginCompatibility(pluginRoot: string): boo
     join(pluginRoot, 'src', 'channel', 'plugin.ts'),
     join(pluginRoot, 'src', 'channel', 'onboarding.js'),
     join(pluginRoot, 'src', 'channel', 'onboarding.ts'),
+    // Legacy feishu plugin layout (src/channel.ts, src/onboarding.ts)
+    join(pluginRoot, 'src', 'channel.ts'),
+    join(pluginRoot, 'src', 'channel.js'),
+    join(pluginRoot, 'src', 'onboarding.ts'),
+    join(pluginRoot, 'src', 'onboarding.js'),
   ];
 
   let patched = false;

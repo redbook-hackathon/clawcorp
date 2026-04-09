@@ -201,8 +201,17 @@ function ensureConfiguredPluginsUpgraded(configuredChannels: string[]): void {
         if (channelType === 'wechat' && patchInstalledWeChatPluginCompatibility(targetDir)) {
           logger.info('[plugin] Applied WeChat compatibility shim for OpenClaw 2026.3.22');
         }
-        if (channelType === 'feishu' && patchInstalledFeishuPluginCompatibility(targetDir)) {
-          logger.info('[plugin] Applied Feishu compatibility shim for OpenClaw 2026.3.22');
+        if (channelType === 'feishu') {
+          if (patchInstalledFeishuPluginCompatibility(targetDir)) {
+            logger.info('[plugin] Applied Feishu compatibility shim for OpenClaw 2026.3.22');
+          }
+          // Also patch legacy feishu plugin directory if it co-exists
+          const legacyFeishuDir = join(homedir(), '.openclaw', 'extensions', 'feishu');
+          if (legacyFeishuDir !== targetDir && existsSync(legacyFeishuDir)) {
+            if (patchInstalledFeishuPluginCompatibility(legacyFeishuDir)) {
+              logger.info('[plugin] Applied Feishu compatibility shim to legacy plugin for OpenClaw 2026.3.22');
+            }
+          }
         }
       } catch (err) {
         logger.warn('[plugin] Failed to patch plugin compatibility shim:', err);
@@ -239,7 +248,11 @@ function ensureConfiguredPluginsUpgraded(configuredChannels: string[]): void {
       if (!existsSync(join(npmPkgPath, 'openclaw.plugin.json'))) continue;
       const sourceVersion = readPluginVersion(join(npmPkgPath, 'package.json'));
       if (!sourceVersion) continue;
-      if (isInstalled && installedVersion && sourceVersion === installedVersion) continue;
+      if (isInstalled && installedVersion && sourceVersion === installedVersion) {
+        // Version unchanged — still apply compatibility shims (they are idempotent)
+        patchInstalledPluginCompat();
+        continue;
+      }
 
       logger.info(`[plugin] Auto-upgrading ${channelType} plugin: ${installedVersion} → ${sourceVersion} (dev/node_modules)`);
       try {
@@ -252,6 +265,7 @@ function ensureConfiguredPluginsUpgraded(configuredChannels: string[]): void {
       } catch (err) {
         logger.warn(`[plugin] Failed to auto-upgrade ${channelType} plugin from node_modules:`, err);
       }
+      continue;
     }
     patchInstalledPluginCompat();
   }

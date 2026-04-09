@@ -1,6 +1,6 @@
 import { readOpenClawConfig, writeOpenClawConfig } from './channel-config';
 import { withConfigLock } from './config-mutex';
-import { listAgentsSnapshot } from './agent-config';
+import { listAgentsSnapshot, writeAgentSoulMd } from './agent-config';
 import { listTaskSnapshots } from './task-config';
 import type { Team, TeamSummary, CreateTeamRequest, UpdateTeamRequest, TeamStatus } from '../../src/types/team';
 import { randomUUID } from 'crypto';
@@ -162,12 +162,63 @@ export async function createTeam(request: CreateTeamRequest): Promise<TeamSummar
     teams.push(team);
     await writeTeamsConfig(teams);
 
-    // TODO: Per D-21, sync updates to:
-    // - Agent reportsTo relationships
-    // - Agent Memory (team context)
-    // - Agent Soul (team collaboration awareness)
-    // - Agent Identity (team identity)
-    // This will be implemented when those systems are available
+    // Per D-21: Sync reportsTo relationships on agent entries
+    const config = await readOpenClawConfig() as ConfigDocument;
+    const agentsConfig = (config.agents ?? {}) as Record<string, unknown>;
+    const agentList = Array.isArray(agentsConfig.list)
+      ? [...(agentsConfig.list as Array<Record<string, unknown>>)]
+      : [];
+
+    for (const member of agentList) {
+      if (request.memberIds.includes(member.id as string)) {
+        member.reportsTo = request.leaderId;
+        member.teamRole = 'worker';
+      }
+      if ((member.id as string) === request.leaderId) {
+        member.teamRole = 'leader';
+      }
+    }
+
+    config.agents = { ...agentsConfig, list: agentList };
+    await writeOpenClawConfig(config);
+
+    // Write leader SOUL.md with team member info
+    const updatedSnapshot = await listAgentsSnapshot();
+    const workers = updatedSnapshot.agents.filter(
+      (a) => request.memberIds.includes(a.id)
+    );
+    const leaderSoulContent = [
+      `你是「${name}」团队的 Leader。`,
+      '',
+      '## 团队成员',
+      ...workers.map(
+        (w) => `- **${w.name}** (${w.id}): ${w.responsibility || '暂无职责描述'}`
+      ),
+      '',
+      '## 管理方式',
+      '- 收到任务时，根据成员职责分配给对应 worker',
+      '- 使用 sessions_spawn 创建子会话来委派任务',
+      '- 汇总 worker 结果后回复用户',
+      '',
+    ].join('\n');
+
+    await writeAgentSoulMd({
+      ...leader,
+      teamContextOverride: leaderSoulContent,
+      teamRole: 'leader',
+    });
+
+    // Write SOUL.md for each worker
+    for (const memberId of request.memberIds) {
+      const worker = snapshot.agents.find((a) => a.id === memberId);
+      if (worker) {
+        await writeAgentSoulMd({
+          ...worker,
+          teamRole: 'worker',
+          reportsTo: request.leaderId,
+        });
+      }
+    }
 
     return await buildTeamSummary(team);
   });
@@ -215,6 +266,83 @@ export async function updateTeam(teamId: string, updates: UpdateTeamRequest): Pr
     teams[teamIndex] = updatedTeam;
     await writeTeamsConfig(teams);
 
+    // Sync reportsTo relationships if members changed
+    if (updates.memberIds !== undefined) {
+      const config = await readOpenClawConfig() as ConfigDocument;
+      const agentsConfig = (config.agents ?? {}) as Record<string, unknown>;
+      const agentList = Array.isArray(agentsConfig.list)
+        ? [...(agentsConfig.list as Array<Record<string, unknown>>)]
+        : [];
+
+      const removedIds = team.memberIds.filter((id) => !updates.memberIds!.includes(id));
+      const addedIds = updates.memberIds!.filter((id) => !team.memberIds.includes(id));
+
+      for (const member of agentList) {
+        const memberId = member.id as string;
+        // Clear reportsTo for removed members
+        if (removedIds.includes(memberId)) {
+          delete member.reportsTo;
+          delete member.teamRole;
+        }
+        // Set reportsTo for newly added members
+        if (addedIds.includes(memberId)) {
+          member.reportsTo = updatedTeam.leaderId;
+          member.teamRole = 'worker';
+        }
+      }
+
+      config.agents = { ...agentsConfig, list: agentList };
+      await writeOpenClawConfig(config);
+
+      // Sync SOUL.md for leader (with updated member list)
+      const newSnapshot = await listAgentsSnapshot();
+      const newWorkers = newSnapshot.agents.filter(
+        (a) => updatedTeam.memberIds.includes(a.id)
+      );
+      const leaderSoulContent = [
+        `你是「${updatedTeam.name}」团队的 Leader。`,
+        '',
+        '## 团队成员',
+        ...newWorkers.map(
+          (w) => `- **${w.name}** (${w.id}): ${w.responsibility || '暂无职责描述'}`
+        ),
+        '',
+        '## 管理方式',
+        '- 收到任务时，根据成员职责分配给对应 worker',
+        '- 使用 sessions_spawn 创建子会话来委派任务',
+        '- 汇总 worker 结果后回复用户',
+        '',
+      ].join('\n');
+      const leaderAgent = newSnapshot.agents.find((a) => a.id === updatedTeam.leaderId);
+      if (leaderAgent) {
+        await writeAgentSoulMd({
+          ...leaderAgent,
+          teamContextOverride: leaderSoulContent,
+          teamRole: 'leader',
+        });
+      }
+
+      // Rewrite SOUL.md for removed workers (clear team context)
+      for (const removedId of removedIds) {
+        const removedAgent = newSnapshot.agents.find((a) => a.id === removedId);
+        if (removedAgent) {
+          await writeAgentSoulMd(removedAgent);
+        }
+      }
+
+      // Write SOUL.md for newly added workers
+      for (const addedId of addedIds) {
+        const addedAgent = newSnapshot.agents.find((a) => a.id === addedId);
+        if (addedAgent) {
+          await writeAgentSoulMd({
+            ...addedAgent,
+            teamRole: 'worker',
+            reportsTo: updatedTeam.leaderId,
+          });
+        }
+      }
+    }
+
     return await buildTeamSummary(updatedTeam);
   });
 }
@@ -226,14 +354,31 @@ export async function updateTeam(teamId: string, updates: UpdateTeamRequest): Pr
 export async function deleteTeam(teamId: string): Promise<void> {
   await withConfigLock(async () => {
     const teams = await readTeamsConfig();
+    const team = teams.find((t) => t.id === teamId);
     const filteredTeams = teams.filter((t) => t.id !== teamId);
 
-    if (filteredTeams.length === teams.length) {
+    if (!team) {
       throw new Error(`Team not found: ${teamId}`);
     }
 
     await writeTeamsConfig(filteredTeams);
 
-    // TODO: Clear agent reportsTo relationships when that system is available
+    // Clear reportsTo and teamRole for former team members
+    const config = await readOpenClawConfig() as ConfigDocument;
+    const agentsConfig = (config.agents ?? {}) as Record<string, unknown>;
+    const agentList = Array.isArray(agentsConfig.list)
+      ? [...(agentsConfig.list as Array<Record<string, unknown>>)]
+      : [];
+
+    const allMemberIds = [team.leaderId, ...team.memberIds];
+    for (const member of agentList) {
+      if (allMemberIds.includes(member.id as string)) {
+        delete member.reportsTo;
+        delete member.teamRole;
+      }
+    }
+
+    config.agents = { ...agentsConfig, list: agentList };
+    await writeOpenClawConfig(config);
   });
 }

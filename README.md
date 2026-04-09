@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="src/assets/logo.svg" width="128" height="128" alt="ClawCorp Logo" />
+  <img src="https://raw.githubusercontent.com/adongwanai/Awesome-Awesome-LLMs/main/3ba2cce59750231a7875b7d713b863dd.jpg" width="128" height="128" alt="ClawCorp Logo" />
 </p>
 
 <h1 align="center">ClawCorp — The OS for an All-AI Company</h1>

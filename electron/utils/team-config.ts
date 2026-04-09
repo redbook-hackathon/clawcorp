@@ -183,7 +183,6 @@ export async function createTeam(request: CreateTeamRequest): Promise<TeamSummar
     await writeOpenClawConfig(config);
 
     // Write leader SOUL.md with team member info
-    const snapshot = await listAgentsSnapshot();
     const workers = snapshot.agents.filter(
       (a) => request.memberIds.includes(a.id)
     );

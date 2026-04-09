@@ -667,7 +667,7 @@ export function TaskKanban() {
   }, [fetchTasks, fetchAgents]);
 
   return (
-    <div className="flex flex-col h-full overflow-hidden" style={{ background: T.bg }}>
+    <div className="flex flex-col h-full" style={{ background: T.bg }}>
       {/* Page Header: Command Center */}
       <div className="px-6 pt-5 pb-4 bg-white border-b border-gray-100">
         <CommandCenter
@@ -682,7 +682,7 @@ export function TaskKanban() {
 
       {/* View Tabs */}
       <div className="bg-white px-6 pt-3">
-        <Tabs value={currentView} onValueChange={handleViewChange} className="flex-1 flex flex-col overflow-hidden">
+        <Tabs value={currentView} onValueChange={handleViewChange} className="flex-1 flex flex-col">
           <div className="flex items-center justify-between">
             <TabsList>
               <TabsTrigger value="board">看板</TabsTrigger>
@@ -700,7 +700,7 @@ export function TaskKanban() {
           </div>
 
           {/* Board View */}
-          <TabsContent value="board" className="flex-1 overflow-auto m-0">
+          <TabsContent value="board" className="flex-1 min-h-0 overflow-auto m-0">
             {visibleAgents.length === 0 ? (
               <EmptyState />
             ) : (
@@ -719,7 +719,7 @@ export function TaskKanban() {
           </TabsContent>
 
           {/* Calendar View */}
-          <TabsContent value="calendar" className="flex-1 overflow-auto m-0">
+          <TabsContent value="calendar" className="flex-1 min-h-0 m-0">
             <CalendarView
               onTaskClick={(taskId) => {
                 const nextParams = new URLSearchParams(searchParams);

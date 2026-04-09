@@ -2,7 +2,7 @@
  * CalendarView component for Task Kanban
  * Phase 02 - Completely custom header with Shadcn components
  */
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
@@ -16,6 +16,8 @@ import { Button } from '@/components/ui/button';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import './calendar-custom.css';
+
+type CalendarViewType = 'timeGridWeek' | 'dayGridMonth';
 
 interface CalendarViewProps {
   onTaskClick?: (taskId: string) => void;
@@ -52,11 +54,43 @@ function renderEventContent(eventInfo: EventContentArg) {
 
 export function CalendarView({ onTaskClick }: CalendarViewProps) {
   const calendarRef = useRef<FullCalendar>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [calendarHeight, setCalendarHeight] = useState(600);
   const [currentTitle, setCurrentTitle] = useState('');
-  const [currentView, setCurrentView] = useState<'timeGridWeek' | 'dayGridMonth' | 'dayGridYear'>('dayGridMonth');
+  const [currentView, setCurrentView] = useState<CalendarViewType>('dayGridMonth');
+  const [initialized, setInitialized] = useState(false);
 
   const tasks = useApprovalsStore((s) => s.tasks);
   const agents = useAgentsStore((s) => s.agents);
+
+  // Measure container height dynamically
+  useEffect(() => {
+    const measure = () => {
+      if (containerRef.current) {
+        const rect = containerRef.current.getBoundingClientRect();
+        const height = Math.max(rect.height - 180, 300); // minus header height
+        setCalendarHeight(height);
+      }
+    };
+
+    measure();
+    // Re-measure on resize
+    const ro = new ResizeObserver(measure);
+    if (containerRef.current) {
+      ro.observe(containerRef.current);
+    }
+    return () => ro.disconnect();
+  }, []);
+
+  // Mark initialized after first render
+  useEffect(() => {
+    if (!initialized) {
+      setInitialized(true);
+      // Set initial title
+      const api = calendarRef.current?.getApi();
+      if (api) setCurrentTitle(api.view.title);
+    }
+  }, [initialized]);
 
   // Filter tasks with deadlines and convert to calendar events
   const events = useMemo<EventInput[]>(() => {
@@ -105,7 +139,7 @@ export function CalendarView({ onTaskClick }: CalendarViewProps) {
     }
   };
 
-  const handleViewChange = (view: 'timeGridWeek' | 'dayGridMonth' | 'dayGridYear') => {
+  const handleViewChange = (view: CalendarViewType) => {
     const api = calendarRef.current?.getApi();
     if (api) {
       api.changeView(view);
@@ -121,24 +155,11 @@ export function CalendarView({ onTaskClick }: CalendarViewProps) {
     }
   };
 
-  // Empty state
-  if (events.length === 0) {
-    return (
-      <div className="flex h-full items-center justify-center">
-        <div className="text-center">
-          <p className="text-lg font-medium text-gray-500">暂无排期任务</p>
-          <p className="text-sm text-gray-400 mt-2">
-            为任务设置截止日期后,将在日程视图中显示
-          </p>
-        </div>
-      </div>
-    );
-  }
-
+  // Use dayGridMonth as the "year view" fallback - shows monthly overview
   return (
-    <div className="h-full flex flex-col p-6">
+    <div ref={containerRef} className="flex flex-col h-full p-6 min-h-0">
       {/* Custom Header */}
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex items-center justify-between mb-4 shrink-0">
         {/* Left: Navigation */}
         <div className="flex items-center gap-2">
           <Button variant="outline" size="icon" onClick={handlePrev}>
@@ -156,17 +177,16 @@ export function CalendarView({ onTaskClick }: CalendarViewProps) {
         <h2 className="text-lg font-semibold tracking-tight">{currentTitle}</h2>
 
         {/* Right: View Switcher */}
-        <Tabs value={currentView} onValueChange={(v) => handleViewChange(v as any)}>
+        <Tabs value={currentView} onValueChange={(v) => handleViewChange(v as CalendarViewType)}>
           <TabsList>
             <TabsTrigger value="timeGridWeek">周视图</TabsTrigger>
             <TabsTrigger value="dayGridMonth">月视图</TabsTrigger>
-            <TabsTrigger value="dayGridYear">年视图</TabsTrigger>
           </TabsList>
         </Tabs>
       </div>
 
       {/* Calendar */}
-      <div className="flex-1 calendar-container border rounded-xl shadow-sm bg-card overflow-hidden">
+      <div className="flex-1 min-h-0 calendar-container border rounded-xl shadow-sm bg-card overflow-hidden">
         <FullCalendar
           ref={calendarRef}
           plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
@@ -180,7 +200,7 @@ export function CalendarView({ onTaskClick }: CalendarViewProps) {
             }
           }}
           datesSet={handleDatesSet}
-          height="100%"
+          height={calendarHeight}
           locale="zh-cn"
           dayMaxEvents={3}
           moreLinkText="更多"

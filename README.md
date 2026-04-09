@@ -86,25 +86,6 @@ pnpm run init
 pnpm dev
 ```
 
----
-
-## Join Waitlist
-
-Early adopters receive exclusive discounts and VIP configuration support. 
-Visit our [website](https://clawcorp.top/#waitlist) to join the waitlist, or drop by our [Discord Server](https://discord.com/invite/84Kex3GGAh) to get notified about early access.
-
----
-
-## Community
-
-| Enterprise WeChat | Feishu Group | Discord |
-| :---: | :---: | :---: |
-| <img src="src/assets/community/wecom-qr.png" width="150" alt="WeChat QR Code" /> | <img src="src/assets/community/feishu-qr.png" width="150" alt="Feishu QR Code" /> | <img src="src/assets/community/20260212-185822.png" width="150" alt="Discord QR Code" /> |
-
-For partnership inquiries, please contact: [public@valuecell.ai](mailto:public@valuecell.ai)
-
----
-
 <p align="center">
   <sub>Built with ❤️ by the ValueCell Team</sub>
 </p>

@@ -87,24 +87,6 @@ pnpm run init
 pnpm dev
 ```
 
----
-
-## 加入候补名单 (内测)
-
-首批用户将获得专属折扣与优先配置支持。
-请访问 [ClawCorp 官网](https://clawcorp.top/#waitlist) 留下邮箱，或者[加入官方 Discord](https://discord.com/invite/84Kex3GGAh)，获取第一时间产品内测通知。
-
----
-
-## 社区与联系我们
-
-| 企业微信 | 飞书群组 | Discord |
-| :---: | :---: | :---: |
-| <img src="src/assets/community/wecom-qr.png" width="150" alt="企业微信二维码" /> | <img src="src/assets/community/feishu-qr.png" width="150" alt="飞书二维码" /> | <img src="src/assets/community/20260212-185822.png" width="150" alt="Discord 二维码" /> |
-
-合作咨询请发送邮件至：[public@valuecell.ai](mailto:public@valuecell.ai)
-
----
 <p align="center">
   <sub>由 ValueCell 团队用 ❤️ 打造</sub>
 </p>

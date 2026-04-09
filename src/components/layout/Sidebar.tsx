@@ -30,6 +30,7 @@ import { useGatewayStore } from '@/stores/gateway';
 import { useSettingsStore } from '@/stores/settings';
 import { useRightPanelStore } from '@/stores/rightPanelStore';
 import { CHANNEL_ICONS, type Channel } from '@/types/channel';
+import { resolveSessionDisplayLabel } from '@/lib/session-label';
 
 const CHAT_REQUEST_FILE_UPLOAD_EVENT = 'chat:request-file-upload';
 const CHAT_UPLOAD_PENDING_KEY = 'clawcorp:pending-upload';
@@ -43,17 +44,6 @@ type NavItemConfig = {
   path: string;
   icon: typeof LayoutDashboard;
 };
-
-function getSessionDisplayName(session: { key: string; displayName?: string; targetAgentId?: string; agentId?: string }, agents: Array<{ id: string; name: string }>): string {
-  // Priority: session.displayName (from Gateway) > agent name > raw session key
-  if (session.displayName) return session.displayName;
-  const agentId = session.targetAgentId ?? session.agentId;
-  if (agentId) {
-    const agent = agents.find((a) => a.id === agentId);
-    if (agent) return agent.name;
-  }
-  return session.key;
-}
 
 function SectionHeader({
   icon: Icon,
@@ -339,7 +329,7 @@ export function Sidebar() {
 
   const searchSessionsData = sessions.map((session) => ({
     key: session.key,
-    label: getSessionDisplayName(session, agents),
+    label: resolveSessionDisplayLabel(session, agents),
   }));
 
   const searchAgents = agents.map((agent) => ({
@@ -537,7 +527,7 @@ export function Sidebar() {
               {sortedSessions.length > 0 ? (
                 <div className="space-y-2">
                   {sortedSessions.map((session) => {
-                    const label = getSessionDisplayName(session, agents);
+                    const label = resolveSessionDisplayLabel(session, agents);
                     const isPinned = pinnedSessionKeySet.has(session.key);
                     const isActive = currentSessionKey === session.key;
                     const messagePreview = getMessagePreview(session.key);

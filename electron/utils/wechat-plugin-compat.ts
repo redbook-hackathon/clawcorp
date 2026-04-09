@@ -3,8 +3,9 @@ import { join } from 'node:path';
 
 const NORMALIZE_IMPORT = 'import { normalizeAccountId } from "openclaw/plugin-sdk/account-id";';
 const SHIM_MARKER = '// ClawCorp compatibility shim for OpenClaw 2026.3.22';
+const LEGACY_TYPED_NORMALIZE_SIGNATURE_RE = /function normalizeAccountId\(raw:\s*string\):\s*string\s*\{/g;
 const NORMALIZE_SHIM = `${SHIM_MARKER}
-function normalizeAccountId(raw: string): string {
+function normalizeAccountId(raw) {
   const trimmed = raw.trim().toLowerCase();
   const normalized = trimmed
     .replace(/[^a-z0-9_-]+/g, "-")
@@ -14,13 +15,14 @@ function normalizeAccountId(raw: string): string {
 }`;
 
 export function patchWeChatPluginCompatibilitySource(source: string): string {
-  if (!source.includes(NORMALIZE_IMPORT)) {
-    return source;
+  const repaired = source.replace(LEGACY_TYPED_NORMALIZE_SIGNATURE_RE, 'function normalizeAccountId(raw) {');
+  if (!repaired.includes(NORMALIZE_IMPORT)) {
+    return repaired;
   }
-  if (source.includes(SHIM_MARKER)) {
-    return source;
+  if (repaired.includes(SHIM_MARKER)) {
+    return repaired;
   }
-  return source.replace(NORMALIZE_IMPORT, NORMALIZE_SHIM);
+  return repaired.replace(NORMALIZE_IMPORT, NORMALIZE_SHIM);
 }
 
 export function patchInstalledWeChatPluginCompatibility(pluginRoot: string): boolean {
@@ -78,7 +80,7 @@ function buildFeishuSdkCompatibilityShim(specifiersRaw: string): string {
   }
 
   if (importedLocalNames.has('normalizeAccountId')) {
-    parts.push(`function normalizeAccountId(raw: string): string {
+    parts.push(`function normalizeAccountId(raw) {
   if (typeof pluginSdk.normalizeAccountId === 'function') {
     return pluginSdk.normalizeAccountId(raw);
   }
@@ -107,7 +109,7 @@ function buildFeishuSdkCompatibilityShim(specifiersRaw: string): string {
 }
 
 export function patchFeishuPluginCompatibilitySource(source: string): string {
-  let next = source;
+  let next = source.replace(LEGACY_TYPED_NORMALIZE_SIGNATURE_RE, 'function normalizeAccountId(raw) {');
 
   if (!next.includes(SHIM_MARKER) && !next.includes(FEISHU_PLUGIN_SDK_NAMESPACE_IMPORT)) {
     const importMatch = next.match(FEISHU_PLUGIN_SDK_IMPORT_RE);
